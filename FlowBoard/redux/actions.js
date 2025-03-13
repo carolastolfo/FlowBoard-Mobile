@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST, REGISTER } from "./actionTypes";
+import { LOGIN_REQUEST, REGISTER, SEARCH_BOARD, SET_BOARDS } from "./actionTypes";
 
 export const loginRequest = (username, password) => ({
     type: LOGIN_REQUEST,
@@ -10,22 +10,12 @@ export const register = (username, email, password) => ({
     payload: {username, email, password}
 })
 
-export const loadUserBoards = (currentUserId) => ({
-    type: LOAD_USER_BOARDS,
-    payload: { currentUserId },
-});
-
-export const searchBoard = (searchId, currentUserId) => ({
+export const searchBoard = (boardId, currentUserId) => ({
     type: SEARCH_BOARD,
-    payload: { searchId, currentUserId },
+    payload: { boardId, currentUserId },
 });
 
-export const setBoards = (boards) => ({
+export const setBoards = (currentUserId) => ({
     type: SET_BOARDS,
-    payload: boards,
-});
-
-export const setError = (error) => ({
-    type: SET_ERROR,
-    payload: error,
+    payload: { currentUserId },
 });

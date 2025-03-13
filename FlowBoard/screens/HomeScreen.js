@@ -1,6 +1,7 @@
 import { 
     Text,
-    TouchableOpacity
+    TouchableOpacity,
+    Button
  } from "react-native"
 
 const HomeScreen = ( {navigation} ) => {
