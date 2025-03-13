@@ -30,4 +30,15 @@ const initialState = {
 }
 
 
-export const boardReducer = (state=initialState, action) => {}
+export const boardReducer = (state=initialState, action) => {
+    switch (action.type) {
+
+        case LOGIN: {}
+
+        case REGISTER: {}
+
+        default:
+            return state
+
+    }
+}
