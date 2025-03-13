@@ -1,6 +1,7 @@
-import { LOGIN, REGISTER } from "../actionTypes"
+import { LOGIN_REQUEST, REGISTER } from "../actionTypes"
 
 const initialState = {
+    currentUser: null,
     users: [
         {
             id: 1,
@@ -30,4 +31,41 @@ const initialState = {
 }
 
 
-export const boardReducer = (state=initialState, action) => {}
+export const boardReducer = (state=initialState, action) => {
+    console.log(`boardReducer received action: ${action.type}
+        \n payload: ${JSON.stringify(action.payload)}`)
+
+        switch(action.type){
+            case LOGIN_REQUEST: {
+                
+                const { username, password } = action.payload;
+
+                console.log(`Login request received
+                    \n credentials: ${JSON.stringify(action.payload)}`)
+        
+                    const user = state.users.find(
+                        user => user.username === username && user.password === password
+                    );
+        
+                    if (user) {
+                        console.log("Login successful for:", username);
+                        // You can return some kind of user state update here if needed
+                        return {
+                            ...state,
+                            // set a current user
+                            currentUser: user,
+                        };
+                    } else {
+                        console.log("Login failed: User not found or incorrect password");
+                        return {
+                            ...state,
+                            currentUser: null, // clear current user on failure
+                          };
+                    }
+                }
+        
+                default:
+                    return state;
+            }
+        }
+        
