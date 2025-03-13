@@ -1,7 +1,7 @@
-import { LOGIN, REGISTER } from "./actionTypes";
+import { LOGIN_REQUEST, REGISTER } from "./actionTypes";
 
-export const login = (username, password) => ({
-    type: LOGIN,
+export const loginRequest = (username, password) => ({
+    type: LOGIN_REQUEST,
     payload: {username, password}
 })
 

@@ -1,15 +1,16 @@
-import { View, Text, Button } from 'react-native';
+import { 
+    Text,
+    TouchableOpacity
+ } from "react-native"
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ( {navigation} ) => {
     return (
-        <View>
-          <Text>Home</Text>
-          <Button title="Login" onPress={() => navigation.navigate('Login')} />
-          <Button title="Register" onPress={() => navigation.navigate('Register')} />
-          <Button title="Boards" onPress={() => navigation.navigate('Boards')} />
-        </View>
-      );
-
+        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text >Log In</Text>
+        <Button title="Boards" onPress={() => navigation.navigate('Boards')} />
+      </TouchableOpacity>
+    )
+    
 }
 
 export default HomeScreen

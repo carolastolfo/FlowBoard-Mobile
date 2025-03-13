@@ -5,7 +5,6 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import BoardsScreen from './screens/BoardsScreen';
 
-
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
