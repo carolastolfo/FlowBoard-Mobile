@@ -1,4 +1,5 @@
-import { LOGIN_REQUEST, REGISTER } from "../actionTypes"
+import { LOGIN_REQUEST, REGISTER, SET_BOARDS, SEARCH_BOARD } from "../actionTypes"
+import { data } from '../../data/data'
 
 const initialState = {
     currentUser: null,
@@ -28,44 +29,91 @@ const initialState = {
             boards: [101],
         },
     ],
+    boards: [],
+    error: "",
 }
 
 
-export const boardReducer = (state=initialState, action) => {
+export const boardReducer = (state = initialState, action) => {
     console.log(`boardReducer received action: ${action.type}
         \n payload: ${JSON.stringify(action.payload)}`)
 
-        switch(action.type){
-            case LOGIN_REQUEST: {
-                
-                const { username, password } = action.payload;
+    switch (action.type) {
+        case LOGIN_REQUEST: {
 
-                console.log(`Login request received
+            const { username, password } = action.payload;
+
+            console.log(`Login request received
                     \n credentials: ${JSON.stringify(action.payload)}`)
-        
-                    const user = state.users.find(
-                        user => user.username === username && user.password === password
-                    );
-        
-                    if (user) {
-                        console.log("Login successful for:", username);
-                        // You can return some kind of user state update here if needed
-                        return {
-                            ...state,
-                            // set a current user
-                            currentUser: user,
-                        };
-                    } else {
-                        console.log("Login failed: User not found or incorrect password");
-                        return {
-                            ...state,
-                            currentUser: null, // clear current user on failure
-                          };
-                    }
-                }
-        
-                default:
-                    return state;
+
+            const user = state.users.find(
+                user => user.username === username && user.password === password
+            );
+
+            if (user) {
+                console.log("Login successful for:", username);
+                // You can return some kind of user state update here if needed
+                return {
+                    ...state,
+                    // set a current user
+                    currentUser: user,
+                };
+            } else {
+                console.log("Login failed: User not found or incorrect password");
+                return {
+                    ...state,
+                    currentUser: null, // clear current user on failure
+                };
             }
         }
-        
+
+        case SET_BOARDS:
+            const { currentUserId } = action.payload;
+            const currentUser = data.users.find(user => user.id === currentUserId);
+
+            if (currentUser) {
+                const userBoardIds = currentUser.boards;
+                const userBoards = data.boards.filter(
+                    board => userBoardIds.includes(board.id) ||
+                        board.team_members.includes(currentUserId) ||
+                        board.owner_id === currentUserId
+                );
+                return { ...state, boards: userBoards, error: "" };
+            } else {
+                return { ...state, error: "User not found", boards: [] };
+            }
+
+        case SEARCH_BOARD: {
+            const { boardId, currentUserId } = action.payload;
+            const currentUser = data.users.find(user => user.id === currentUserId);
+
+            if (!boardId) {
+                console.log(32423)
+                return { ...state, error: "Please enter a Board ID", boards: [] };
+            }
+
+            try {
+                const boardIdNum = parseInt(boardId, 10);
+                const foundBoard = data.boards.find(board => board.id === boardIdNum);
+
+                if (foundBoard && (
+                    currentUser.boards.includes(foundBoard.id) ||
+                    foundBoard.team_members.includes(currentUserId) ||
+                    foundBoard.owner_id === currentUserId
+                )) {
+                    return { ...state, boards: [foundBoard], error: "" };
+                } else {
+                    return { ...state, error: "Board not found or you don't have access to any boards", boards: [] };
+                }
+            } catch (err) {
+                return { ...state, error: "An error occurred during search", boards: [] };
+            }
+        }
+
+      
+
+        default:
+            return state;
+    }
+}
+
