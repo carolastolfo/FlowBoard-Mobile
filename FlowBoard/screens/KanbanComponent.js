@@ -1,5 +1,10 @@
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import TodoScreen from './TodoScreen';
+import DoingScreen from './DoingScreen';
+import DoneScreen from './DoneScreen';
+import globalStyles from '../shared/globalStyles';
 
 const Tab = createBottomTabNavigator()
 
@@ -7,18 +12,29 @@ export default KanbanComponent = () => {
 
   const tabOptions = ({ route }) => (
     {
-      tabBarActiveTintColor: 'indigo',
+      tabBarActiveTintColor: '#6D72C3',
       tabBarInactiveTintColor: 'gray',
       tabBarStyle: [{ display: 'flex' }],
+      tabBarStyle: [
+        {
+          position: 'absolute',
+          bottom: -10,
+          height: 60,
+          backgroundColor: 'white',
+          borderTopWidth: 0,
+        }
+      ],
       tabBarIcon: ({ focused }) => {
 
         let iconName = ""
-        let colorName = focused ? 'indigo' : 'gray'
+        let colorName = focused ? '#6D72C3' : 'gray'
 
-        if (route.name === "Profile") {
-          iconName = focused ? 'user' : 'user-o'
-        } else if (route.name === "Settings") {
-          iconName = 'cog'
+        if (route.name === "To-Do") {
+          iconName = focused ? 'list' : 'list'
+        } else if (route.name === "Doing") {
+          iconName = 'tasks'
+        } else if (route.name === "Done") {
+          iconName = 'check-circle'
         }
 
         return (
@@ -35,9 +51,14 @@ export default KanbanComponent = () => {
     // you must use NavigationContainer
     // <NavigationContainer>
 
-    <Tab.Navigator screenOptions={tabOptions}>
-      <Tab.Screen component={ProfileScreen} name='Profile' />
-      <Tab.Screen component={SettingsScreen} name='Settings' />
-    </Tab.Navigator>
+    <SafeAreaProvider>
+      <SafeAreaView style={globalStyles.safeArea}>
+        <Tab.Navigator screenOptions={tabOptions}>
+          <Tab.Screen component={TodoScreen} name='To-Do' />
+          <Tab.Screen component={DoingScreen} name='Doing' />
+          <Tab.Screen component={DoneScreen} name='Done' />
+        </Tab.Navigator>
+      </SafeAreaView>
+    </SafeAreaProvider>
   )
 }
