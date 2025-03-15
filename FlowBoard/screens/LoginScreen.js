@@ -16,19 +16,23 @@ const LoginScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false);
 
   const dispatch = useDispatch();
-
-  const currentUser = useSelector((state) => state.boardsRoot.currentUser); 
+  const currentUser = useSelector((state) => state.boardsRoot.currentUser);
   
   useEffect(() => {
     if (currentUser) {
-      navigation.navigate('Home');
-    } else if (username || password) {
-      // Only show error after an attempt
+      // reset the navigation stack to Home to remove Login from history
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Home' }],
+      });
+    } else if (hasAttemptedLogin) {
+      // Only show error after a login attempt
       setError('Invalid username or password');
     }
-  }, [currentUser]);
+  }, [currentUser, hasAttemptedLogin, navigation]);
 
   const handleLogin = () => {
     if (!username || !password) {
@@ -37,11 +41,9 @@ const LoginScreen = ({ navigation }) => {
     }
 
     setError("");
-
+    setHasAttemptedLogin(true);
     dispatch(loginRequest(username, password));
-
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
