@@ -8,7 +8,7 @@ import globalStyles from '../shared/globalStyles';
 
 const Tab = createBottomTabNavigator()
 
-export default KanbanComponent = () => {
+const KanbanComponent = () => {
 
   const tabOptions = ({ route }) => (
     {
@@ -62,3 +62,5 @@ export default KanbanComponent = () => {
     </SafeAreaProvider>
   )
 }
+
+export default KanbanComponent

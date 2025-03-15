@@ -1,17 +1,51 @@
 import { 
     Text,
     TouchableOpacity,
-    Button
+    Button,
+    View
  } from "react-native"
+ import { useLayoutEffect } from "react";
+ import { useSelector, useDispatch } from "react-redux";
+ import { logoutUser } from "../redux/actions";
 
-const HomeScreen = ( {navigation} ) => {
-    return (
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text >Log In</Text>
-        <Button title="Boards" onPress={() => navigation.navigate('Boards')} />
-      </TouchableOpacity>
-    )
-    
-}
+ const HomeScreen = ({ navigation }) => {
+   
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.boardsRoot.currentUser);
+  
+  const handleLogout = () => {
+    dispatch(logoutUser()); 
+  //   navigation.reset({
+  //     index: 0,
+  //     routes: [{ name: 'Login' }],
+  //   });
+   };
+  
+   useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => 
+        currentUser ? (
+          <TouchableOpacity 
+            onPress={handleLogout}
+          >
+            <Text style={{ color: '#007AFF',}}>Logout</Text>
+          </TouchableOpacity>
+        ) : null
+    });
+  }, [navigation, currentUser]);
 
-export default HomeScreen
+  return (
+    <>
+      {currentUser ? (
+        <View>
+          <Button title="Boards" onPress={() => navigation.navigate('Boards')} />
+          <Button title="Board" onPress={() => navigation.navigate('KanbanBoard')} />
+        </View>
+      ) : (
+        <Button title="Login" onPress={() => navigation.navigate('Login')} />
+      )}
+    </>
+  );
+};
+
+export default HomeScreen;

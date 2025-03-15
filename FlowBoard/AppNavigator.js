@@ -4,6 +4,7 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import BoardsScreen from './screens/BoardsScreen';
+import KanbanComponent from './screens/KanbanComponent';
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -31,6 +32,11 @@ const AppNavigator = () => {
             name="Boards" 
             component={BoardsScreen} 
             options={{ title: 'Boards' }}
+          />
+          <Stack.Screen 
+            name="KanbanBoard" 
+            component={KanbanComponent} 
+            options={{ title: 'Board' }}
           />
         </Stack.Navigator>
       </NavigationContainer>

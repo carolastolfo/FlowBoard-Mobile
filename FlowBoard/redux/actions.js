@@ -1,9 +1,13 @@
-import { LOGIN_REQUEST, REGISTER, SEARCH_BOARD, SET_BOARDS } from "./actionTypes";
+import { LOGIN_REQUEST, LOGOUT_USER, REGISTER, SEARCH_BOARD, SET_BOARDS } from "./actionTypes";
 
 export const loginRequest = (username, password) => ({
     type: LOGIN_REQUEST,
     payload: {username, password}
 })
+
+export const logoutUser = () => ({
+    type: LOGOUT_USER
+  });
 
 export const register = (username, email, password) => ({
     type: REGISTER,
