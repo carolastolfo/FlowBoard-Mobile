@@ -1,15 +1,17 @@
 import { 
     Text,
     TouchableOpacity,
-    Button
+    Button,
+    View
  } from "react-native"
 
 const HomeScreen = ( {navigation} ) => {
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text >Log In</Text>
+      <View>
+        <Button title="Login" onPress={() => navigation.navigate('Login')} />
         <Button title="Boards" onPress={() => navigation.navigate('Boards')} />
-      </TouchableOpacity>
+        <Button title="Board" onPress={() => navigation.navigate('KanbanBoard')}/>
+        </View>
     )
     
 }
