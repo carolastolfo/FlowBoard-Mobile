@@ -46,10 +46,6 @@ const KanbanComponent = () => {
   )
 
   return (
-    // Use NavigationContainer only if you do not have from previous navigations
-    // for example: if you are presenting Bottom Tabs as your first screen
-    // you must use NavigationContainer
-    // <NavigationContainer>
 
     <SafeAreaProvider>
       <SafeAreaView style={globalStyles.safeArea}>
