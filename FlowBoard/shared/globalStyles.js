@@ -20,7 +20,7 @@ const globalStyles = StyleSheet.create({
     width: '80%',
     marginTop: 20,
   },
-  inputStyle: {
+  inputAddTAsk: {
     flex: 1,
     borderColor: "#ddd",
     borderTopLeftRadius: 5,
@@ -42,55 +42,74 @@ const globalStyles = StyleSheet.create({
     justifyContent: 'center'
   },
   taskContainer: {
-    flexDirection: 'row',
-    width: '80%'
+    flex: 1,
+    width: '80%',
+    marginBottom: 60,
   },
   taskContainerItem: {
     flexDirection: 'row',
     backgroundColor: 'white',
     padding: 10,
+    paddingRight: 40,
     marginVertical: 5,
     borderRadius: 10,
     alignItems: 'center',
     shadowColor: "#000",
     shadowOffset: { width: 10, height: 5 },
     shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowRadius: 3
   },
   taskContainerContent: {
     width: '90%',
     borderWidth: 1,
     padding: 10,
     borderRadius: 5,
+    marginTop: 10,
+    marginBottom: 10
+  },
+  taskText: {
+    fontSize: 16
   },
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    width: '100%'
+    width: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
   },
   modalView: {
-    width: "200",
-    height: '150',
-    backgroundColor: "#E40763",
-    borderRadius: 15,
-    textAlign: 'left',
+    width: '90%',
+    padding: 10,
+    backgroundColor: "white",
     justifyContent: 'space-evenly',
     shadowColor: "#000",
     shadowOffset: { width: 5, height: 15 },
     shadowOpacity: 0.2,
     shadowRadius: 10
   },
-  buttonContainer: {
+  headerStyle: {
+    fontSize: 18,
+    textAlign: 'center',
+    fontWeight: 'bold',
+  },
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: '20'
   },
-  textBtn: {
+  buttonContainer: {
+    flex: 1,
+    backgroundColor: '#5C60A5',
+  },
+  contentContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10
+  },
+  textContent: {
     fontSize: '14',
     color: 'white',
     fontWeight: 'bold',
-    marginLeft: '5'
+    marginLeft: 5
   },
   separator: {
     height: 1,
@@ -102,6 +121,19 @@ const globalStyles = StyleSheet.create({
     textDecorationLine: "line-through",
     color: "gray"
   },
+  buttonStyle: {
+    backgroundColor: '#5C60A5',
+    alignItems: 'center',
+    padding: 10,
+    flex: 1,
+  },
+  inputStyle: {
+    // flex: 1,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    padding: 10,
+    fontSize: 16,
+  }
 });
 
 export default globalStyles;

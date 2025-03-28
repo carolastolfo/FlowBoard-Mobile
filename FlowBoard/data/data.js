@@ -35,26 +35,6 @@ export const data = {
             tasks: [],
         },
     ],
-    tasks: {
-        "col-1": {
-            title: "To Do",
-            items: [
-                { id: "1001", content: "Implement authentication API", status: "To Do", assignee: 1, due_date: "2025-03-20", tags: ["Backend", "Auth"], reminder: "2025-03-19T10:00:00Z" }
-            ]
-        },
-        "col-2": {
-            title: "In Progress",
-            items: [
-                { id: "1002", content: "Create wireframes for the landing page", status: "Doing", assignee: 2, due_date: "2025-03-15", tags: ["UI/UX", "Design"], reminder: "2025-03-14T09:00:00Z" }
-            ]
-        },
-        "col-3": {
-            title: "Done",
-            items: [
-                { id: "1003", content: "Deploy the authentication API to the staging server", status: "Done", assignee: 1, due_date: "2025-03-28", tags: ["Deployment", "Backend"], reminder: "2025-03-19T10:00:00Z" }
-            ]
-        }
-    },
     join_requests: [
         {
             id: 1,

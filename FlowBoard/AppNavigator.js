@@ -10,38 +10,38 @@ import KanbanComponent from './screens/KanbanComponent';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen 
-            name="Home" 
-            component={HomeScreen} 
-            options={{ title: 'Home' }}
-          />
-          <Stack.Screen 
-            name="Login" 
-            component={LoginScreen} 
-            options={{ title: 'Login' }}
-          />
-          <Stack.Screen 
-            name="Register" 
-            component={RegisterScreen} 
-            options={{ title: 'Register' }}
-          />
-          <Stack.Screen 
-            name="Boards" 
-            component={BoardsScreen} 
-            options={{ title: 'Boards' }}
-          />
-          <Stack.Screen 
-            name="KanbanBoard" 
-            component={KanbanComponent} 
-            options={{ title: 'Board' }}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  };
-  
-  export default AppNavigator;
-  
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{ title: 'Home' }}
+        />
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{ title: 'Login' }}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{ title: 'Register' }}
+        />
+        <Stack.Screen
+          name="Boards"
+          component={BoardsScreen}
+          options={{ title: 'Boards' }}
+        />
+        <Stack.Screen
+          name="KanbanBoard"
+          component={KanbanComponent}
+          options={{ title: 'Board' }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default AppNavigator;
+
