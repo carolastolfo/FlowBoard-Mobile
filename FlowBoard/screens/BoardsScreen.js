@@ -30,8 +30,9 @@ const BoardsScreen = () => {
     // To redirect to board
     const handleRedirect = (boardId) => {
         setTimeout(() => {
-            // navigation.navigate("Board"); // for navigation Freddy!
             console.log("Navigating to board:", boardId);
+            // inside a board's scree, todoScreen is the first screen by default
+            // navigation.navigate("TodoScreen", { boardId });
         }, 1000);
     };
 
