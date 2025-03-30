@@ -164,7 +164,6 @@ export const fetchTasks = () => async dispatch => {
     }
 };
 
-
 export const addTask = (task) => async dispatch => {
     try {
         console.log(`Trying to save task to database : ${JSON.stringify(task)}`);
