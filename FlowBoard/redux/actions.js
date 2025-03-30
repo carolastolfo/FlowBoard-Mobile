@@ -25,26 +25,38 @@ export const register = (username, email, password) => ({
 //Boards
 export const setBoards = (currentUserId) => async (dispatch) => {
     try {
-        // Get the user's data to fetch board IDs (boards field has the info)
+        // Fetch user document
         const userDocRef = doc(usersCollection, currentUserId);
         const userSnapshot = await getDoc(userDocRef);
-        const userData = userSnapshot.data();
 
-        const userBoardIds = userData.boards || []; // Get board id
-
-        if (userBoardIds.length === 0) { // If a user doesn't have any board
+        // Ensure user data exists
+        const userData = userSnapshot.exists() ? userSnapshot.data() : null;
+        if (!userData || !Array.isArray(userData.boards)) {
             dispatch({ type: SET_BOARDS, payload: { boards: [] } });
             return;
         }
 
-        const boardRefs = userBoardIds.map((boardId) => doc(db, "boards", boardId));
+        // Extract string IDs from DocumentReferences
+        const boardIds = userData.boards.map((boardRef) => boardRef.id);
 
+        // Fetch each board document by ID
+        const boardRefs = boardIds.map((boardId) => doc(db, "boards", boardId));
         const boardSnapshots = await Promise.all(boardRefs.map(getDoc));
-        const boards = boardSnapshots
-            .filter((snap) => snap.exists()) // Ensure document exists
-            .map((snap) => ({ id: snap.id, ...snap.data() }));
 
-        // console.log("Fetched boards:", boards);
+        // Convert board data and replace Firestore DocumentReference with its ID
+        const boards = boardSnapshots
+            .filter((snap) => snap.exists())
+            .map((snap) => {
+                const boardData = snap.data();
+
+                return {
+                    id: snap.id,
+                    ...boardData,
+                    owner_id: boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
+                        ? boardData.owner_id.id
+                        : boardData.owner_id || null
+                };
+            });
 
         dispatch({ type: SET_BOARDS, payload: { boards } });
     } catch (error) {
@@ -54,9 +66,22 @@ export const setBoards = (currentUserId) => async (dispatch) => {
 
 export const searchBoard = (boardName) => async (dispatch) => {
     try {
-        const q = query(boardsCollection, where("name", "==", boardName));
-        const snapshot = await getDocs(q);
-        const foundBoards = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const snapshot = await getDocs(boardsCollection);
+
+        const foundBoards = snapshot.docs
+            .map((doc) => {
+                const boardData = doc.data();
+                return { 
+                    id: doc.id,
+                    name: boardData.name,
+                    background_color: boardData.background_color,
+                    team_members: boardData.team_members,
+                    owner_id: boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
+                        ? boardData.owner_id.id // Extract Firestore document ID
+                        : boardData.owner_id || null
+                };
+            })
+            .filter((board) => board.name.toLowerCase().includes(boardName.toLowerCase())); // Case-insensitive search
 
         if (foundBoards.length > 0) {
             dispatch({ type: SEARCH_BOARD, payload: { boards: foundBoards } });
@@ -68,6 +93,7 @@ export const searchBoard = (boardName) => async (dispatch) => {
         dispatch({ type: SEARCH_BOARD, payload: { boards: [], error: "An error occurred during search" } });
     }
 };
+
 
 // Board
 export const fetchTasks = () => async dispatch => {

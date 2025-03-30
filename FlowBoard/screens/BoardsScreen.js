@@ -34,7 +34,7 @@ const BoardsScreen = () => {
             console.log("Navigating to board:", boardId);
             // inside a board's scree, todoScreen is the first screen by default
             // navigation.navigate("TodoScreen", { boardId });
-        }, 1000);
+        }, 500);
     };
 
     const renderBoardItem = ({ item }) => (
