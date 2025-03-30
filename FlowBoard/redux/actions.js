@@ -1,9 +1,12 @@
 import { LOGIN_REQUEST, LOGOUT_USER, REGISTER, SEARCH_BOARD, SET_BOARDS, FETCH_TASKS, ADD_TASK, EDIT_TASK, DELETE_TASK, TOGGLE_COMPLETION_STATUS, UPDATE_TASK_DUE_DATE } from "./actionTypes";
 import { db } from '../config/firebaseConfig';
-import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from 'firebase/firestore';
+import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs, where, query, getDoc } from 'firebase/firestore';
 
 const taskCollection = "kanbantasks"
 const collectionRef = collection(db, taskCollection)
+
+const usersCollection = collection(db, "users");
+const boardsCollection = collection(db, "boards");
 
 export const loginRequest = (username, password) => ({
     type: LOGIN_REQUEST,
@@ -19,15 +22,52 @@ export const register = (username, email, password) => ({
     payload: { username, email, password }
 })
 
-export const searchBoard = (boardId, currentUserId) => ({
-    type: SEARCH_BOARD,
-    payload: { boardId, currentUserId },
-});
+//Boards
+export const setBoards = (currentUserId) => async (dispatch) => {
+    try {
+        // Get the user's data to fetch board IDs (boards field has the info)
+        const userDocRef = doc(usersCollection, currentUserId);
+        const userSnapshot = await getDoc(userDocRef);
+        const userData = userSnapshot.data();
 
-export const setBoards = (currentUserId) => ({
-    type: SET_BOARDS,
-    payload: { currentUserId },
-});
+        const userBoardIds = userData.boards || []; // Get board id
+
+        if (userBoardIds.length === 0) { // If a user doesn't have any board
+            dispatch({ type: SET_BOARDS, payload: { boards: [] } });
+            return;
+        }
+
+        const boardRefs = userBoardIds.map((boardId) => doc(db, "boards", boardId));
+
+        const boardSnapshots = await Promise.all(boardRefs.map(getDoc));
+        const boards = boardSnapshots
+            .filter((snap) => snap.exists()) // Ensure document exists
+            .map((snap) => ({ id: snap.id, ...snap.data() }));
+
+        // console.log("Fetched boards:", boards);
+
+        dispatch({ type: SET_BOARDS, payload: { boards } });
+    } catch (error) {
+        console.error("Error fetching boards:", error);
+    }
+};
+
+export const searchBoard = (boardName) => async (dispatch) => {
+    try {
+        const q = query(boardsCollection, where("name", "==", boardName));
+        const snapshot = await getDocs(q);
+        const foundBoards = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+        if (foundBoards.length > 0) {
+            dispatch({ type: SEARCH_BOARD, payload: { boards: foundBoards } });
+        } else {
+            dispatch({ type: SEARCH_BOARD, payload: { boards: [], error: "Board not found or no access" } });
+        }
+    } catch (error) {
+        console.error("Error searching board:", error);
+        dispatch({ type: SEARCH_BOARD, payload: { boards: [], error: "An error occurred during search" } });
+    }
+};
 
 // Board
 export const fetchTasks = () => async dispatch => {

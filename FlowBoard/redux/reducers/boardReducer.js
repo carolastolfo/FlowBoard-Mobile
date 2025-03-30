@@ -6,6 +6,7 @@ import {
 } from "../actionTypes";
 import { data } from "../../data/data";
 
+
 const initialState = {
   currentUser: null,
   users: [
@@ -70,64 +71,25 @@ export const boardReducer = (state = initialState, action) => {
       }
     }
     case "LOGOUT_USER":
-        console.log(`Board reducer received logout request`)
+      console.log(`Board reducer received logout request`)
       return {
         ...state,
         currentUser: null,
       };
 
     case SET_BOARDS:
-      const { currentUserId } = action.payload;
-      const currentUser = data.users.find((user) => user.id === currentUserId);
+      return {
+        ...state,
+        boards: action.payload.boards,
+        error: "",
+      };
 
-      if (currentUser) {
-        const userBoardIds = currentUser.boards;
-        const userBoards = data.boards.filter(
-          (board) =>
-            userBoardIds.includes(board.id) ||
-            board.team_members.includes(currentUserId) ||
-            board.owner_id === currentUserId
-        );
-        return { ...state, boards: userBoards, error: "" };
-      } else {
-        return { ...state, error: "User not found", boards: [] };
-      }
-
-    case SEARCH_BOARD: {
-      const { boardId, currentUserId } = action.payload;
-      const currentUser = data.users.find((user) => user.id === currentUserId);
-
-      if (!boardId) {
-        console.log(32423);
-        return { ...state, error: "Please enter a Board ID", boards: [] };
-      }
-
-      try {
-        const boardIdNum = parseInt(boardId, 10);
-        const foundBoard = data.boards.find((board) => board.id === boardIdNum);
-
-        if (
-          foundBoard &&
-          (currentUser.boards.includes(foundBoard.id) ||
-            foundBoard.team_members.includes(currentUserId) ||
-            foundBoard.owner_id === currentUserId)
-        ) {
-          return { ...state, boards: [foundBoard], error: "" };
-        } else {
-          return {
-            ...state,
-            error: "Board not found or you don't have access to any boards",
-            boards: [],
-          };
-        }
-      } catch (err) {
-        return {
-          ...state,
-          error: "An error occurred during search",
-          boards: [],
-        };
-      }
-    }
+    case SEARCH_BOARD:
+      return {
+        ...state,
+        boards: action.payload.boards,
+        error: action.payload.error || "",
+      };
 
     default:
       return state;

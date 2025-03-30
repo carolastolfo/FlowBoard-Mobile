@@ -5,6 +5,7 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
 // Copy the initialization code from firestore and save it here
+
 };
 
 // Initialize Firebase
