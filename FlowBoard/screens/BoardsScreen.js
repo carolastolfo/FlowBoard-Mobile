@@ -2,14 +2,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { data } from '../data/data';
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { searchBoard, setBoards } from '../redux/actions'
+import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
 
 const BoardsScreen = () => {
     const currentUserId = "TRK8Ig0TxD2Ghm9XiUsi"; // Should be replaced after making Auth features
     const currentUser = data.users.find(user => user.id === currentUserId);
     const dispatch = useDispatch();
 
-    const [boardId, setBoardId] = useState("");
     const [boardName, setBoardName] = useState("");
     const boards = useSelector(state => state.boardsRoot.boards);
     const error = useSelector(state => state.boardsRoot.error);
@@ -19,14 +18,15 @@ const BoardsScreen = () => {
     }, [dispatch]);
     
     const handleSearch = () => {
-        dispatch(searchBoard(boardName));
+        if (boardName){
+            dispatch(searchBoard(boardName));
+        }
     };
     
     const handleReset = () => {
         setBoardName("");
         dispatch(setBoards(currentUserId));
     };
-
 
     // To redirect to board
     const handleRedirect = (boardId) => {
@@ -37,16 +37,35 @@ const BoardsScreen = () => {
         }, 500);
     };
 
+    const handleJoinBoard = async (boardId) => {
+        console.log("Joining board:", boardId);
+        dispatch(joinBoard(boardId, currentUserId));
+        const success = await dispatch(joinBoard(boardId, currentUserId));
+
+        if (!success) {
+            alert("You already requested to join this board.");
+        }
+    };
+
     const renderBoardItem = ({ item }) => (
+        
         <TouchableOpacity
             style={[styles.boardCard, { backgroundColor: item.background_color }]}
             onPress={() => handleRedirect(item.id)}
         >
             <Text style={styles.boardTitle}>{item.name}</Text>
-            <Text style={styles.teamMembers}>Team Members: {item.team_members}</Text>
+            <Text style={styles.teamMembers}>Team Members: {item.team_members.length}</Text>
             {item.owner_id === currentUserId &&
                 <Text style={styles.ownerBadge}>Owner</Text>
             }
+            {!item.team_members.includes(currentUserId) && (
+                    <TouchableOpacity
+                        style={styles.joinButton}
+                        onPress={() => handleJoinBoard(item.id, item.team_members)}
+                    >
+                        <Text style={styles.ownerBadge}>Join</Text>
+                    </TouchableOpacity>
+                )}
         </TouchableOpacity>
     );
 

@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST, LOGOUT_USER, REGISTER, SEARCH_BOARD, SET_BOARDS, FETCH_TASKS, ADD_TASK, EDIT_TASK, DELETE_TASK, TOGGLE_COMPLETION_STATUS, UPDATE_TASK_DUE_DATE } from "./actionTypes";
+import { LOGIN_REQUEST, LOGOUT_USER, REGISTER, SEARCH_BOARD, SET_BOARDS, FETCH_TASKS, ADD_TASK, EDIT_TASK, DELETE_TASK, TOGGLE_COMPLETION_STATUS, UPDATE_TASK_DUE_DATE, JOIN_BOARD, ACCEPT_JOIN } from "./actionTypes";
 import { db } from '../config/firebaseConfig';
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, getDocs, where, query, getDoc } from 'firebase/firestore';
 
@@ -7,6 +7,7 @@ const collectionRef = collection(db, taskCollection)
 
 const usersCollection = collection(db, "users");
 const boardsCollection = collection(db, "boards");
+const joinRequestsCollection = collection(db, "joinRequests");
 
 export const loginRequest = (username, password) => ({
     type: LOGIN_REQUEST,
@@ -22,7 +23,7 @@ export const register = (username, email, password) => ({
     payload: { username, email, password }
 })
 
-//Boards
+//Boards list
 export const setBoards = (currentUserId) => async (dispatch) => {
     try {
         // Fetch user document
@@ -48,10 +49,11 @@ export const setBoards = (currentUserId) => async (dispatch) => {
             .filter((snap) => snap.exists())
             .map((snap) => {
                 const boardData = snap.data();
-
                 return {
                     id: snap.id,
-                    ...boardData,
+                    name: boardData.name,
+                    background_color: boardData.background_color,
+                    team_members: boardData.team_members.map(memberRef => memberRef.id), // No ref just user ID
                     owner_id: boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
                         ? boardData.owner_id.id
                         : boardData.owner_id || null
@@ -64,6 +66,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
     }
 };
 
+// Search board by name
 export const searchBoard = (boardName) => async (dispatch) => {
     try {
         const snapshot = await getDocs(boardsCollection);
@@ -75,7 +78,7 @@ export const searchBoard = (boardName) => async (dispatch) => {
                     id: doc.id,
                     name: boardData.name,
                     background_color: boardData.background_color,
-                    team_members: boardData.team_members,
+                    team_members: boardData.team_members.map(memberRef => memberRef.id),
                     owner_id: boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
                         ? boardData.owner_id.id // Extract Firestore document ID
                         : boardData.owner_id || null
@@ -94,6 +97,45 @@ export const searchBoard = (boardName) => async (dispatch) => {
     }
 };
 
+// Join board
+export const joinBoard = (boardId, userId) => async dispatch => {
+    try {
+        const q = query(
+            joinRequestsCollection,
+            where("boardId", "==", boardId),
+            where("userId", "==", userId)
+        );
+
+        // Get the query snapshot
+        const querySnapshot = await getDocs(q);
+
+        // Check if the document already exists
+        if (querySnapshot.empty) {
+        // Create a new join request in the Firestore collection
+            await addDoc(joinRequestsCollection, {
+                boardId: boardId,
+                userId: userId,
+                status: "pending", // Set status to "pending" / completed for accepted request
+            });
+
+            dispatch({
+                type: JOIN_BOARD,
+                payload: { boardId, userId, status: "pending",},
+            });
+            return true
+        } else {
+            console.log("Join request already exists for this board and user.");
+            return false
+        }
+    } catch (error) {
+        console.error("Error joining board:", error);
+    }
+};
+
+// Accept join request
+export const acceptJoin = () => async dispatch => {
+    // add requested UserId to related board's team_members and change join_request doc's status field to completed
+};
 
 // Board
 export const fetchTasks = () => async dispatch => {
