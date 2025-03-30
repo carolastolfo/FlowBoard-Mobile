@@ -3,6 +3,8 @@ import {
   REGISTER,
   SET_BOARDS,
   SEARCH_BOARD,
+  JOIN_BOARD,
+  ACCEPT_JOIN
 } from "../actionTypes";
 import { data } from "../../data/data";
 
@@ -90,6 +92,12 @@ export const boardReducer = (state = initialState, action) => {
         boards: action.payload.boards,
         error: action.payload.error || "",
       };
+    
+    case JOIN_BOARD:
+      return state
+    
+    case ACCEPT_JOIN:
+      return state
 
     default:
       return state;
