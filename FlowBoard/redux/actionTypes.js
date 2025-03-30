@@ -1,5 +1,7 @@
 export const SET_BOARDS = "SET_BOARDS";
 export const SEARCH_BOARD = "SEARCH_BOARD";
+export const JOIN_BOARD = "JOIN_BOARD";
+export const ACCEPT_JOIN = "ACCEPT_JOIN";
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const LOGOUT_USER = "LOGOUT_USER";
 export const REGISTER = "REGISTER";
