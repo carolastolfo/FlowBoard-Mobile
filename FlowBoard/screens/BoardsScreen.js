@@ -5,11 +5,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import { searchBoard, setBoards } from '../redux/actions'
 
 const BoardsScreen = () => {
-    const currentUserId = 1; // Should be replaced after making Auth features
+    const currentUserId = "TRK8Ig0TxD2Ghm9XiUsi"; // Should be replaced after making Auth features
     const currentUser = data.users.find(user => user.id === currentUserId);
     const dispatch = useDispatch();
 
     const [boardId, setBoardId] = useState("");
+    const [boardName, setBoardName] = useState("");
     const boards = useSelector(state => state.boardsRoot.boards);
     const error = useSelector(state => state.boardsRoot.error);
     
@@ -18,11 +19,11 @@ const BoardsScreen = () => {
     }, [dispatch]);
     
     const handleSearch = () => {
-        dispatch(searchBoard(boardId, currentUserId));
+        dispatch(searchBoard(boardName));
     };
     
     const handleReset = () => {
-        setBoardId("");
+        setBoardName("");
         dispatch(setBoards(currentUserId));
     };
 
@@ -42,7 +43,7 @@ const BoardsScreen = () => {
             onPress={() => handleRedirect(item.id)}
         >
             <Text style={styles.boardTitle}>{item.name}</Text>
-            <Text style={styles.teamMembers}>Team Members: {item.team_members.length}</Text>
+            <Text style={styles.teamMembers}>Team Members: {item.team_members}</Text>
             {item.owner_id === currentUserId &&
                 <Text style={styles.ownerBadge}>Owner</Text>
             }
@@ -56,11 +57,10 @@ const BoardsScreen = () => {
                 <Text style={styles.title}>{currentUser ? currentUser.username + "'s" : "My"} Boards</Text>
                 <View style={styles.searchContainer}>
                     <TextInput
-                        placeholder="Search by Board ID"
+                        placeholder="Search by Board Name"
                         style={styles.searchInput}
-                        value={boardId}
-                        onChangeText={setBoardId}
-                        keyboardType="numeric"
+                        value={boardName}
+                        onChangeText={setBoardName}
                     />
                     <TouchableOpacity onPress={handleSearch} style={styles.button}>
                         <Text style={styles.buttonText}>Search</Text>
