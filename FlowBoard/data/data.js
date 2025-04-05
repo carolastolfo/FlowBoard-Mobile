@@ -24,7 +24,6 @@ export const data = {
             owner_id: 1,
             team_members: [2],
             background_color: "beige",
-            tasks: [1001, 1002],
         },
         {
             id: 102,
@@ -32,7 +31,6 @@ export const data = {
             owner_id: 2,
             team_members: [1],
             background_color: "pink",
-            tasks: [],
         },
     ],
     join_requests: [

@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-.env
+.my_settings.js
 
 # Expo
 .expo/

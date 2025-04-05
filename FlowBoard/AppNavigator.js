@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
-import BoardsScreen from './screens/BoardsScreen';
+import BoardsNavigator from './screens/BoardsNavigator';
 import KanbanComponent from './screens/KanbanComponent';
 
 // Create a stack navigator
@@ -30,7 +30,7 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Boards"
-          component={BoardsScreen}
+          component={BoardsNavigator}
           options={{ title: 'Boards' }}
         />
         <Stack.Screen
