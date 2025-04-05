@@ -11,7 +11,7 @@ import {
  const HomeScreen = ({ navigation }) => {
    
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.boardsRoot.currentUser);
+  const currentUser = useSelector((state) => state.usersRoot.currentUser);
   
   const handleLogout = () => {
     dispatch(logoutUser()); 
@@ -42,7 +42,10 @@ import {
           <Button title="Board" onPress={() => navigation.navigate('KanbanBoard')} />
         </View>
       ) : (
+        <View>
         <Button title="Login" onPress={() => navigation.navigate('Login')} />
+        <Button title="Register" onPress={() => navigation.navigate('Register')} />
+        </View>
       )}
     </>
   );

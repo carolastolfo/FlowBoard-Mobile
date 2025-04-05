@@ -3,6 +3,8 @@
 # dependencies
 node_modules/
 .env
+FlowBoard/config/firebaseConfig.js
+
 
 # Expo
 .expo/

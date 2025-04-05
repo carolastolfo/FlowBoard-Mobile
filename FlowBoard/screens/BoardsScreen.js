@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
 
-const BoardsScreen = () => {
-    const currentUserId = "TRK8Ig0TxD2Ghm9XiUsi"; // Should be replaced after making Auth features
-    const currentUser = data.users.find(user => user.id === currentUserId);
+const BoardsScreen = ( {navigation} ) => {
+    const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
+    const currentUser = useSelector(state => state.usersRoot.currentUser)
     const dispatch = useDispatch();
 
     const [boardName, setBoardName] = useState("");
@@ -105,6 +105,14 @@ const BoardsScreen = () => {
             ) : (
                 <Text style={styles.noBoards}>No boards found.</Text>
             )}
+                      <TouchableOpacity 
+                        style={styles.button} 
+                        onPress={() => navigation.navigate('CreateBoard')}
+                      >
+
+                          <Text style={styles.buttonText}>Create a New Board</Text>
+
+                      </TouchableOpacity>
         </View>
     );
 };
