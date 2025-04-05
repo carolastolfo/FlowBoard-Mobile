@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
 
-const BoardsScreen = () => {
+const BoardsScreen = ({ navigation }) => {
     const currentUserId = "TRK8Ig0TxD2Ghm9XiUsi"; // Should be replaced after making Auth features
     const currentUser = data.users.find(user => user.id === currentUserId);
     const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const BoardsScreen = () => {
         setTimeout(() => {
             console.log("Navigating to board:", boardId);
             // inside a board's scree, todoScreen is the first screen by default
-            // navigation.navigate("TodoScreen", { boardId });
+            navigation.navigate("KanbanBoard", { boardId });
         }, 500);
     };
 
@@ -84,7 +84,7 @@ const BoardsScreen = () => {
                     <TouchableOpacity onPress={handleSearch} style={styles.button}>
                         <Text style={styles.buttonText}>Search</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={handleReset} style={styles.resetButton}>
+                    <TouchableOpacity onPress={handleReset} style={styles.button}>
                         <Text style={styles.buttonText}>Show All</Text>
                     </TouchableOpacity>
                 </View>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#E5D4ED',
     },
     header: {
         marginBottom: 20,
@@ -137,14 +137,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
     },
     button: {
-        backgroundColor: '#4a90e2',
-        padding: 10,
-        marginLeft: 10,
-        borderRadius: 4,
-        justifyContent: 'center',
-    },
-    resetButton: {
-        backgroundColor: '#9c9c9c',
+        backgroundColor: '#6D72C3',
         padding: 10,
         marginLeft: 10,
         borderRadius: 4,

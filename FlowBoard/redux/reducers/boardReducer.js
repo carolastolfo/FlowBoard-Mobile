@@ -4,7 +4,9 @@ import {
   SET_BOARDS,
   SEARCH_BOARD,
   JOIN_BOARD,
-  ACCEPT_JOIN
+  ACCEPT_JOIN,
+  REJECT_JOIN,
+  FETCH_JOIN_REQUESTS,
 } from "../actionTypes";
 import { data } from "../../data/data";
 
@@ -38,6 +40,7 @@ const initialState = {
     },
   ],
   boards: [],
+  joinRequests: [],
   error: "",
 };
 
@@ -96,8 +99,18 @@ export const boardReducer = (state = initialState, action) => {
     case JOIN_BOARD:
       return state
     
+    case FETCH_JOIN_REQUESTS:
+      return { 
+        ...state,
+        joinRequests: action.payload
+      };
+    
     case ACCEPT_JOIN:
-      return state
+    case REJECT_JOIN:
+      return {
+        ...state,
+        joinRequests: state.joinRequests.filter(r => r.id !== action.payload)
+      };
 
     default:
       return state;
