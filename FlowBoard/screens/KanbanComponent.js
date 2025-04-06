@@ -9,7 +9,7 @@ import globalStyles from '../shared/globalStyles';
 const Tab = createBottomTabNavigator()
 
 const KanbanComponent = ({ route }) => {
-  console.log("KANBAN", route)
+ 
   const { boardId } = route.params;
 
   const tabOptions = ({ route }) => (
