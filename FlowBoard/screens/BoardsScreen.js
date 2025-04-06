@@ -34,7 +34,6 @@ const BoardsScreen = ( {navigation} ) => {
     const handleRedirect = (boardId) => {
         setTimeout(() => {
             console.log("Navigating to board:", boardId);
-            // inside a board's scree, todoScreen is the first screen by default
             navigation.navigate("KanbanBoard", { boardId });
         }, 500);
     };
@@ -46,6 +45,8 @@ const BoardsScreen = ( {navigation} ) => {
 
         if (!success) {
             alert("You already requested to join this board.");
+        } else {
+            alert("Request sent successfully. Please wait for the owner's approval.");
         }
     };
 
