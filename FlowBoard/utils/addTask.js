@@ -1,8 +1,9 @@
 import { addTask } from '../redux/actions';
 
-export const handleAddTask = (dispatch, taskName, status = 'todo', dueDate) => {
+export const handleAddTask = (dispatch, taskName, boardId, status = 'todo', dueDate) => {
 
   const newTask = {
+    board: boardId,
     name: taskName,
     completed: false,
     status: status,

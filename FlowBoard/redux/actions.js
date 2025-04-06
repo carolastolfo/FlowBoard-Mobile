@@ -74,7 +74,7 @@ export const searchBoard = (boardName) => async (dispatch) => {
         const foundBoards = snapshot.docs
             .map((doc) => {
                 const boardData = doc.data();
-                return { 
+                return {
                     id: doc.id,
                     name: boardData.name,
                     background_color: boardData.background_color,
@@ -111,7 +111,7 @@ export const joinBoard = (boardId, userId) => async dispatch => {
 
         // Check if the document already exists
         if (querySnapshot.empty) {
-        // Create a new join request in the Firestore collection
+            // Create a new join request in the Firestore collection
             await addDoc(joinRequestsCollection, {
                 boardId: boardId,
                 userId: userId,
@@ -120,7 +120,7 @@ export const joinBoard = (boardId, userId) => async dispatch => {
 
             dispatch({
                 type: JOIN_BOARD,
-                payload: { boardId, userId, status: "pending",},
+                payload: { boardId, userId, status: "pending", },
             });
             return true
         } else {
@@ -163,6 +163,7 @@ export const fetchTasks = () => async dispatch => {
         console.error("Error fetching tasks: ", error);
     }
 };
+
 
 export const addTask = (task) => async dispatch => {
     try {
@@ -271,7 +272,3 @@ export const updateTaskDueDate = ({ dueDate, taskId }) => async dispatch => {
         console.error("Error updating due date:", error);
     }
 };
-
-
-
-
