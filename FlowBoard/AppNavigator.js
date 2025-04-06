@@ -1,4 +1,3 @@
-
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./screens/HomeScreen";
@@ -6,13 +5,15 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
-import BoardsNavigator from './screens/BoardsNavigator';
+
+import BoardsNavigator from "./screens/BoardsNavigator";
 
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
@@ -33,10 +34,8 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Boards"
-
           component={BoardsNavigator}
-          options={{ title: 'Boards' }}
-
+          options={{ title: "Boards" }}
         />
         <Stack.Screen
           name="KanbanBoard"
