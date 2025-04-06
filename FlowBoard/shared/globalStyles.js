@@ -137,16 +137,18 @@ const globalStyles = StyleSheet.create({
   tagContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 10,
+    marginTop: 5,
   },
-  tagItem: {
-    backgroundColor: '#ddd', 
-    borderRadius: 12,       
-    paddingHorizontal: 8,   
-    paddingVertical: 4,      
-    marginRight: 5,         
-    marginBottom: 5,      
-  },
+  tagText: {
+    backgroundColor: '#C7EF00',
+    color: '#333',
+    marginRight: 6,
+    marginBottom: 6,
+    padding: 5,
+    paddingRight: 10,
+    paddingLeft: 10,
+    borderRadius: 20,
+  }
 });
 
 export default globalStyles;

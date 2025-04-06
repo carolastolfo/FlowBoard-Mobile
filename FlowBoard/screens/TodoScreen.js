@@ -89,6 +89,7 @@ const TodoScreen = ({ navigation, route }) => {
               data={taskList}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
+
                 <View style={globalStyles.taskContainerItem}>
                   <TouchableOpacity
                     style={{ marginRight: 10 }}
@@ -103,15 +104,32 @@ const TodoScreen = ({ navigation, route }) => {
                   <View style={{ gap: 10 }}>
                     <Text style={globalStyles.taskText}>{item.name}</Text>
 
+                    {/* {item.tag && item.tag.length > 0 && (
+                      <View style={globalStyles.tagContainer}>
+                        <Text style={globalStyles.tagText}>{item.tag}</Text>
+                      </View>
+                    )} */}
+                    {/* 
                     {item.tag && item.tag.length > 0 && (
                       <View style={globalStyles.tagContainer}>
-                        {item.tag.map((t, index) => (
-                          <View key={index} style={globalStyles.tagItem}>
-                            <Text style={globalStyles.tagText}>{t}</Text>
-                          </View>
+                        {Array.isArray(item.tag)
+                          ? item.tag.map((tag, index) => (
+                            <Text key={index} style={globalStyles.tagText}>{tag}</Text>
+                          ))
+                          : <Text style={globalStyles.tagText}>#{item.tag}</Text>
+                        }
+                      </View>
+                    )} */}
+
+                    {item.tag && item.tag.length > 0 && (
+                      <View style={globalStyles.tagContainer}>
+                        {item.tag.map((tag, index) => (
+                          <Text key={index} style={globalStyles.tagText}>{tag}</Text>
                         ))}
                       </View>
                     )}
+
+
                   </View>
                 </View>
               )}
@@ -128,6 +146,7 @@ const TodoScreen = ({ navigation, route }) => {
           <View style={[globalStyles.modalView, { height: 400 }]}>
 
             <Text style={globalStyles.headerStyle}>Status: {currentScreen.toUpperCase()}</Text>
+
 
             <Text>
               Due Date: {taskList?.length > 0
@@ -216,6 +235,7 @@ const TodoScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
 
+
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
                 onPress={() => {
@@ -230,6 +250,8 @@ const TodoScreen = ({ navigation, route }) => {
                 </View>
               </TouchableOpacity>
             </View>
+
+
 
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
@@ -258,6 +280,7 @@ const TodoScreen = ({ navigation, route }) => {
       <DueDate
         isOpen={isDueDateModalOpen}
         closeModal={closeDueDateModal}
+        // task={taskList.find((task) => task.id === selectedTaskId)}
         task={taskList.find(task => task.id === selectedTaskId)}
         taskId={selectedTaskId}
       />
