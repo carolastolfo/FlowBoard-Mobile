@@ -4,6 +4,7 @@
 node_modules/
 .my_settings.js
 
+
 # Expo
 .expo/
 dist/

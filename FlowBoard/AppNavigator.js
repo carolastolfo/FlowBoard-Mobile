@@ -1,10 +1,14 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
-import HomeScreen from './screens/HomeScreen';
-import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from './screens/RegisterScreen';
+
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import HomeScreen from "./screens/HomeScreen";
+import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+import KanbanComponent from "./screens/KanbanComponent";
+import CreateBoardScreen from "./screens/CreateBoardScreen";
 import BoardsNavigator from './screens/BoardsNavigator';
 import KanbanComponent from './screens/KanbanComponent';
+
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -16,27 +20,34 @@ const AppNavigator = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Home' }}
+          options={{ title: "Home" }}
         />
         <Stack.Screen
           name="Login"
           component={LoginScreen}
-          options={{ title: 'Login' }}
+          options={{ title: "Login" }}
         />
         <Stack.Screen
           name="Register"
           component={RegisterScreen}
-          options={{ title: 'Register' }}
+          options={{ title: "Register" }}
         />
         <Stack.Screen
           name="Boards"
+
           component={BoardsNavigator}
           options={{ title: 'Boards' }}
+
         />
         <Stack.Screen
           name="KanbanBoard"
           component={KanbanComponent}
-          options={{ title: 'Board' }}
+          options={{ title: "Board" }}
+        />
+        <Stack.Screen
+          name="CreateBoard"
+          component={CreateBoardScreen}
+          options={{ title: "Create a New Board" }}
         />
       </Stack.Navigator>
     </NavigationContainer>
@@ -44,4 +55,3 @@ const AppNavigator = () => {
 };
 
 export default AppNavigator;
-
