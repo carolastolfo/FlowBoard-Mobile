@@ -17,6 +17,7 @@ import {
   DELETE_TASK,
   TOGGLE_COMPLETION_STATUS,
   UPDATE_TASK_DUE_DATE,
+  ADD_TAG_TO_TASK,
   JOIN_BOARD,
   ACCEPT_JOIN, REJECT_JOIN, FETCH_JOIN_REQUESTS
 } from "./actionTypes";
@@ -164,7 +165,7 @@ export const logoutUser = () => {
 
       dispatch({ type: LOGOUT_SUCCESS });
       console.log("User logged out successfully");
-      
+
     } catch (error) {
       console.error("Logout failed:", error.message);
 
@@ -184,7 +185,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     const newBoard = {
       name: boardData.name,
       background_color: boardData.background_color,
-      team_members: userId, 
+      team_members: userId,
       owner_id: userId,
     };
     const newBoardRef = await addDoc(boardsCollection, newBoard);
@@ -215,92 +216,92 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
 
 //  Join requests list
 export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
-    try {
-        const boardsSnapshot = await getDocs(boardsCollection);
-        const ownedBoards = [];
+  try {
+    const boardsSnapshot = await getDocs(boardsCollection);
+    const ownedBoards = [];
 
-        // Get boards that current user is an owner
-        boardsSnapshot.forEach(docSnap => {
-            const data = docSnap.data();
-            if (data.owner_id.id === currentUserId) {
-                ownedBoards.push({ id: docSnap.id, ...data });
-            }
+    // Get boards that current user is an owner
+    boardsSnapshot.forEach(docSnap => {
+      const data = docSnap.data();
+      if (data.owner_id.id === currentUserId) {
+        ownedBoards.push({ id: docSnap.id, ...data });
+      }
+    });
+
+    const joinRequests = [];
+
+    // Get join request for each board
+    for (const board of ownedBoards) {
+      const q = query(
+        joinRequestsCollection,
+        where('boardId', '==', board.id),
+        where('status', '==', 'pending')
+      );
+
+      const reqSnapshot = await getDocs(q);
+      for (const reqDoc of reqSnapshot.docs) {
+        const request = reqDoc.data();
+
+        // Get requested user info
+        const userRef = doc(usersCollection, request.userId);
+        const userSnap = await getDoc(userRef);
+        const username = userSnap.exists() ? userSnap.data().username : 'Unknown User';
+
+        joinRequests.push({
+          id: reqDoc.id,
+          boardId: request.boardId,
+          userId: request.userId,
+          username,
         });
-
-        const joinRequests = [];
-
-        // Get join request for each board
-        for (const board of ownedBoards) {
-            const q = query(
-                joinRequestsCollection,
-                where('boardId', '==', board.id),
-                where('status', '==', 'pending')
-            );
-
-            const reqSnapshot = await getDocs(q);
-            for (const reqDoc of reqSnapshot.docs) {
-                const request = reqDoc.data();
-
-                // Get requested user info
-                const userRef = doc(usersCollection, request.userId);
-                const userSnap = await getDoc(userRef);
-                const username = userSnap.exists() ? userSnap.data().username : 'Unknown User';
-
-                joinRequests.push({
-                    id: reqDoc.id,
-                    boardId: request.boardId,
-                    userId: request.userId,
-                    username,
-                });
-            }
-        }
-
-        dispatch({
-            type: FETCH_JOIN_REQUESTS,
-            payload: joinRequests,
-        });
-    } catch (error) {
-        console.error("Failed to fetch join requests:", error);
+      }
     }
+
+    dispatch({
+      type: FETCH_JOIN_REQUESTS,
+      payload: joinRequests,
+    });
+  } catch (error) {
+    console.error("Failed to fetch join requests:", error);
+  }
 };
 
 // Accept join request
 export const acceptJoin = (joinRequest) => async dispatch => {
-    try {
-        const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
+  try {
+    const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
 
-        // Add user to team_members
-        const boardRef = doc(boardsCollection, boardId);
-        await updateDoc(boardRef, {
-            team_members: arrayUnion(`/users/${userId}`)
-        });
+    // Add user to team_members
+    const boardRef = doc(boardsCollection, boardId);
+    await updateDoc(boardRef, {
+      team_members: arrayUnion(`/users/${userId}`)
+    });
 
-        // Update join request status
-        const joinRequestRef = doc(joinRequestsCollection, requestId);
-        await updateDoc(joinRequestRef, {
-            status: "accepted"
-        });
+    // Update join request status
+    const joinRequestRef = doc(joinRequestsCollection, requestId);
+    await updateDoc(joinRequestRef, {
+      status: "accepted"
+    });
 
-        dispatch({ type: ACCEPT_JOIN, payload: requestId });
-    } catch (error) {
-        console.error("Failed to accept join request", error);
-    }
+    dispatch({ type: ACCEPT_JOIN, payload: requestId });
+  } catch (error) {
+    console.error("Failed to accept join request", error);
+  }
 };
 
 // Reject join request
 export const rejectJoin = (joinRequestId) => async dispatch => {
-    try {
-        const joinRequestRef = doc(joinRequestsCollection, joinRequestId);
-        
-        // Update join request status
-        await updateDoc(joinRequestRef, {
-            status: "rejected"
-        });
+  try {
+    const joinRequestRef = doc(joinRequestsCollection, joinRequestId);
 
-        dispatch({ type: REJECT_JOIN, payload: joinRequestId });
-    } catch (error) {
-        console.error("Failed to reject join request", error);
-    }
+    // Update join request status
+    await updateDoc(joinRequestRef, {
+      status: "rejected"
+    });
+
+    dispatch({ type: REJECT_JOIN, payload: joinRequestId });
+  } catch (error) {
+    console.error("Failed to reject join request", error);
+  }
 };
 
 //Boards list
@@ -336,8 +337,8 @@ export const setBoards = (currentUserId) => async (dispatch) => {
           team_members: boardData.team_members.map((memberRef) => memberRef.id), // No ref just user ID
           owner_id:
             boardData.owner_id &&
-            typeof boardData.owner_id === "object" &&
-            boardData.owner_id.id
+              typeof boardData.owner_id === "object" &&
+              boardData.owner_id.id
               ? boardData.owner_id.id
               : boardData.owner_id || null,
         };
@@ -364,8 +365,8 @@ export const searchBoard = (boardName) => async (dispatch) => {
           team_members: boardData.team_members.map((memberRef) => memberRef.id),
           owner_id:
             boardData.owner_id &&
-            typeof boardData.owner_id === "object" &&
-            boardData.owner_id.id
+              typeof boardData.owner_id === "object" &&
+              boardData.owner_id.id
               ? boardData.owner_id.id // Extract Firestore document ID
               : boardData.owner_id || null,
         };
@@ -426,7 +427,7 @@ export const joinBoard = (boardId, userId) => async (dispatch) => {
   }
 };
 
-// tasks
+// Fletch Tasks
 export const fetchTasks = () => async (dispatch) => {
   try {
     console.log(`Trying to fetch tasks to database.`);
@@ -449,6 +450,7 @@ export const fetchTasks = () => async (dispatch) => {
   }
 };
 
+// Add Tasks
 export const addTask = (task) => async (dispatch) => {
   try {
     console.log(`Trying to save task to database : ${JSON.stringify(task)}`);
@@ -464,11 +466,13 @@ export const addTask = (task) => async (dispatch) => {
         ...task,
       },
     });
+
   } catch (error) {
     console.error("Error adding task: ", error);
   }
 };
 
+// Delete Tasks
 export const deleteTask = (taskId) => async (dispatch) => {
   try {
     console.log(`Trying to delete task ID : ${taskId}`);
@@ -482,11 +486,13 @@ export const deleteTask = (taskId) => async (dispatch) => {
       type: DELETE_TASK,
       payload: taskId,
     });
+
   } catch (error) {
     console.error("Error deleting the task: ", error);
   }
 };
 
+// Edit Tasks
 export const editTask = (updatedTask) => async (dispatch) => {
   try {
     console.log(`Trying to update task: ${JSON.stringify(updatedTask)}`);
@@ -501,11 +507,13 @@ export const editTask = (updatedTask) => async (dispatch) => {
       type: EDIT_TASK,
       payload: updatedTask,
     });
+
   } catch (error) {
     console.error("Error updating task: ", error);
   }
 };
 
+// Toggle Status
 export const toggleCompletionStatus =
   (taskId) => async (dispatch, getState) => {
     try {
@@ -534,29 +542,81 @@ export const toggleCompletionStatus =
         type: TOGGLE_COMPLETION_STATUS,
         payload: updatedTask,
       });
+
     } catch (error) {
       console.error("Error toggling completion status: ", error);
     }
   };
 
+// Update Due Date  
 export const updateTaskDueDate =
   ({ dueDate, taskId }) =>
-  async (dispatch) => {
-    try {
-      console.log(
-        `Trying to update Due Date for task ID: ${taskId} with date: ${dueDate}`
-      );
+    async (dispatch) => {
+      try {
+        console.log(
+          `Trying to update Due Date for task ID: ${taskId} with date: ${dueDate}`
+        );
 
-      const docRef = doc(db, "kanbantasks", taskId);
-      await updateDoc(docRef, { dueDate });
+        const docRef = doc(db, "kanbantasks", taskId);
+        await updateDoc(docRef, { dueDate });
 
-      console.log("Due Date successfully added!");
+        console.log("Due Date successfully added!");
 
-      dispatch({
-        type: UPDATE_TASK_DUE_DATE,
-        payload: { taskId, dueDate },
-      });
-    } catch (error) {
-      console.error("Error updating due date:", error);
-    }
-  };
+        dispatch({
+          type: UPDATE_TASK_DUE_DATE,
+          payload: { taskId, dueDate },
+        });
+
+      } catch (error) {
+        console.error("Error updating due date:", error);
+      }
+    };
+
+// Add Tags
+// export const addTagToTask =
+//   ({ taskId, tag }) =>
+//     async (dispatch) => {
+//       try {
+//         console.log(
+//           `Trying to add tag for task ID: ${taskId} with tag: ${tag}`
+//         );
+//         const docRef = doc(db, "kanbantasks", taskId);
+//         await updateDoc(docRef, { tag });
+
+//         console.log("Tag successfully added!");
+
+//         dispatch({
+//           type: ADD_TAG_TO_TASK,
+//           payload: { taskId, tag },
+//         });
+
+//       } catch (error) {
+//         console.error("Error updating tag:", error);
+//       }
+//     };
+
+export const addTagToTask =
+  ({ taskId, tag }) =>
+    async (dispatch) => {
+      try {
+        console.log(
+          `Trying to add tag for task ID: ${taskId} with tag: ${tag}`
+        );
+        const docRef = doc(db, "kanbantasks", taskId);
+        await updateDoc(docRef, { tag: arrayUnion(...tag) });
+
+        console.log("Tag successfully added!");
+
+        dispatch({
+          type: ADD_TAG_TO_TASK,
+          payload: { taskId, tag },
+        });
+
+      } catch (error) {
+        console.error("Error updating tag:", error);
+      }
+    };
+
+
+
+

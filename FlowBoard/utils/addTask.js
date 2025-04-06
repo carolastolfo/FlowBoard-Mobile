@@ -1,6 +1,6 @@
 import { addTask } from '../redux/actions';
 
-export const handleAddTask = (dispatch, taskName, boardId, status = 'todo', dueDate) => {
+export const handleAddTask = (dispatch, taskName, boardId, status = 'todo', dueDate, tag = []) => {
 
   const newTask = {
     boardId: boardId,
@@ -8,6 +8,7 @@ export const handleAddTask = (dispatch, taskName, boardId, status = 'todo', dueD
     completed: false,
     status: status,
     dueDate: dueDate || "",
+    tag: Array.isArray(tag) ? tag : [tag]
   };
 
   dispatch(addTask(newTask));

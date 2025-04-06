@@ -8,6 +8,7 @@ import { handleAddTask } from '../utils/addTask';
 import { handleDelete } from '../utils/deleteTask';
 import EditTaskModal from '../utils/EditTaskModal';
 import DueDate from '../utils/DueDate';
+import Tag from '../utils/Tag';
 
 const TodoScreen = ({ navigation, route }) => {
 
@@ -21,12 +22,16 @@ const TodoScreen = ({ navigation, route }) => {
 
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isDueDateModalOpen, setIsDueDateModalOpen] = useState(false);
+  const [isTagOpen, setIsTagOpen] = useState(false);
 
   const openEditTaskModal = () => setIsEditTaskModalOpen(true);
   const closeEditTaskModal = () => setIsEditTaskModalOpen(false);
 
   const openDueDateModal = () => setIsDueDateModalOpen(true);
   const closeDueDateModal = () => setIsDueDateModalOpen(false);
+
+  const openTagModal = () => setIsTagOpen(true);
+  const closeTagModal = () => setIsTagOpen(false);
 
   useEffect(() => {
     const taskListener = dispatch(fetchTasks())
@@ -35,10 +40,18 @@ const TodoScreen = ({ navigation, route }) => {
   }, [dispatch]);
 
   // const taskList = useSelector((state) => state.kanbantasks.listOfTasks);
+
+  // const taskList = useSelector((state) =>
+  //   state.kanbantasks.listOfTasks ? state.kanbantasks.listOfTasks.filter(task => task.status === 'to-do') : []
+  // );
+
   const taskList = useSelector((state) =>
-    state.kanbantasks.listOfTasks ? state.kanbantasks.listOfTasks.filter(task => task.status === 'to-do') : []
+    state.kanbantasks.listOfTasks
+      ? state.kanbantasks.listOfTasks.filter(
+        task => task.boardId === boardId && task.status === currentScreen.toLowerCase()
+      )
+      : []
   );
-  console.log("taskList desde Redux:", taskList);
 
   const handleStatusChange = () => {
     const updatedStatus = currentScreen === 'to-do' ? 'doing' : currentScreen === 'doing' ? 'done' : 'to-do';
@@ -87,7 +100,19 @@ const TodoScreen = ({ navigation, route }) => {
                     <Icon name="bars" color="gray" size={25} />
                   </TouchableOpacity>
 
-                  <Text style={globalStyles.taskText}>{item.name}</Text>
+                  <View style={{ gap: 10 }}>
+                    <Text style={globalStyles.taskText}>{item.name}</Text>
+
+                    {item.tag && item.tag.length > 0 && (
+                      <View style={globalStyles.tagContainer}>
+                        {item.tag.map((t, index) => (
+                          <View key={index} style={globalStyles.tagItem}>
+                            <Text style={globalStyles.tagText}>{t}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                  </View>
                 </View>
               )}
               showsVerticalScrollIndicator={false}
@@ -103,7 +128,6 @@ const TodoScreen = ({ navigation, route }) => {
           <View style={[globalStyles.modalView, { height: 400 }]}>
 
             <Text style={globalStyles.headerStyle}>Status: {currentScreen.toUpperCase()}</Text>
-
 
             <Text>
               Due Date: {taskList?.length > 0
@@ -196,6 +220,21 @@ const TodoScreen = ({ navigation, route }) => {
               <TouchableOpacity
                 onPress={() => {
                   setShowModal(!showModal)
+                  openTagModal();
+                }}
+                style={globalStyles.buttonContainer}
+              >
+                <View style={globalStyles.contentContainer}>
+                  <Icon name='minus-circle' color='white' size={25} />
+                  <Text style={globalStyles.textContent}>Tag</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <View style={globalStyles.itemContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(!showModal)
                 }}
                 style={globalStyles.buttonContainer}
               >
@@ -219,7 +258,13 @@ const TodoScreen = ({ navigation, route }) => {
       <DueDate
         isOpen={isDueDateModalOpen}
         closeModal={closeDueDateModal}
-        // task={taskList.find((task) => task.id === selectedTaskId)}
+        task={taskList.find(task => task.id === selectedTaskId)}
+        taskId={selectedTaskId}
+      />
+
+      <Tag
+        isOpen={isTagOpen}
+        closeModal={closeTagModal}
         task={taskList.find(task => task.id === selectedTaskId)}
         taskId={selectedTaskId}
       />

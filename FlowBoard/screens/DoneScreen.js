@@ -36,8 +36,17 @@ const DoneScreen = ({ navigation, route }) => {
   }, [dispatch]);
 
   // const taskList = useSelector((state) => state.kanbantasks.listOfTasks);
+
+  // const taskList = useSelector((state) =>
+  //   state.kanbantasks.listOfTasks.filter(task => task.status === 'done')
+  // );
+
   const taskList = useSelector((state) =>
-    state.kanbantasks.listOfTasks.filter(task => task.status === 'done')
+    state.kanbantasks.listOfTasks
+      ? state.kanbantasks.listOfTasks.filter(
+        task => task.boardId === boardId && task.status === currentScreen.toLowerCase()
+      )
+      : []
   );
 
   const handleStatusChange = () => {

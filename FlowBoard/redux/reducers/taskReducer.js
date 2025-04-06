@@ -1,4 +1,4 @@
-import { FETCH_TASKS, ADD_TASK, EDIT_TASK, DELETE_TASK, TOGGLE_COMPLETION_STATUS, UPDATE_TASK_DUE_DATE } from "../actionTypes";
+import { FETCH_TASKS, ADD_TASK, EDIT_TASK, DELETE_TASK, TOGGLE_COMPLETION_STATUS, UPDATE_TASK_DUE_DATE, ADD_TAG_TO_TASK } from "../actionTypes";
 
 const initialState = {
   listOfTasks: [],
@@ -34,7 +34,10 @@ export const taskReducer = (state = initialState, action) => {
     case DELETE_TASK: {
       return state
     }
-    case 'UPDATE_TASK_DUE_DATE': {
+    case UPDATE_TASK_DUE_DATE: {
+      return state
+    }
+    case ADD_TAG_TO_TASK: {
       return state
     }
     default: {
