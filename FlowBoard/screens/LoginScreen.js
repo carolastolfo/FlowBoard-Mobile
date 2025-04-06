@@ -1,49 +1,64 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
   Text,
   TextInput,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { loginRequest } from "../redux/actions";
-import { useSelector } from "react-redux";
-import { useEffect } from "react";
+import { loginUser } from "../redux/actions"; 
 
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [hasAttemptedLogin, setHasAttemptedLogin] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const currentUser = useSelector((state) => state.boardsRoot.currentUser);
-  
+  const currentUser = useSelector((state) => state.usersRoot.currentUser);
+  const authError = useSelector((state) => state.usersRoot.error);
+  const loading = useSelector((state) => state.usersRoot.loading);
+
+  // Monitor auth state
   useEffect(() => {
     if (currentUser) {
-      // reset the navigation stack to Home to remove Login from history
+      // Reset the navigation stack to Home to remove Login from history
       navigation.reset({
         index: 0,
         routes: [{ name: 'Home' }],
       });
-    } else if (hasAttemptedLogin) {
-      // Only show error after a login attempt
-      setError('Invalid username or password');
     }
-  }, [currentUser, hasAttemptedLogin, navigation]);
+  }, [currentUser, navigation]);
 
-  const handleLogin = () => {
-    if (!username || !password) {
-      setError("Username and password are required");
+  // Handle auth errors
+  useEffect(() => {
+    if (authError) {
+      setError(authError);
+      setIsLoading(false);
+    }
+  }, [authError]);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      setError("Email and password are required");
       return;
     }
 
     setError("");
-    setHasAttemptedLogin(true);
-    dispatch(loginRequest(username, password));
+    setIsLoading(true);
+    
+    try {
+      // Dispatch login action for Redux
+      dispatch(loginUser(email, password));
+    } catch (error) {
+      setError(error.message);
+      setIsLoading(false);
+    }
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
@@ -55,14 +70,15 @@ const LoginScreen = ({ navigation }) => {
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Username</Text>
+            <Text style={styles.label}>Email</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter your username"
-              value={username}
-              onChangeText={setUsername}
+              placeholder="Enter your email"
+              value={email}
+              onChangeText={setEmail}
               autoCapitalize="none"
               autoCorrect={false}
+              keyboardType="email-address"
             />
           </View>
 
@@ -77,14 +93,22 @@ const LoginScreen = ({ navigation }) => {
             />
           </View>
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Log In</Text>
+          <TouchableOpacity 
+            style={styles.loginButton} 
+            onPress={handleLogin}
+            disabled={loading || isLoading}
+          >
+            {loading || isLoading ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.loginButtonText}>Log In</Text>
+            )}
           </TouchableOpacity>
 
           <View style={styles.noteContainer}>
             <Text style={styles.noteText}>Demo credentials:</Text>
             <Text style={styles.noteText}>
-              Username: admin, Password: admin
+              Email: test@test.com, Password: test123
             </Text>
           </View>
         </View>
