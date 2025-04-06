@@ -325,65 +325,45 @@ export const setBoards = (currentUserId) => async (dispatch) => {
 
     const unsubscribers = []; // store unsubscribe functions
 
-<<<<<<< HEAD
-    // Convert board data and replace Firestore DocumentReference with its ID
-    const boards = boardSnapshots
-      .filter((snap) => snap.exists())
-      .map((snap) => {
+    boardIds.forEach((boardId) => {
+      const boardRef = doc(boardsCollection, boardId);
+
+      // Avoid duplicate listeners
+      if (boardListeners[boardId]) return;
+
+      // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
+      const unsubscribe = onSnapshot(boardRef, (snap) => {
+        if (!snap.exists()) return;
+
         const boardData = snap.data();
-        return {
+        const boards = {
           id: snap.id,
           name: boardData.name,
           background_color: boardData.background_color,
-          team_members: boardData.team_members.map((memberRef) => memberRef.id), // No ref just user ID
+          team_members: boardData.team_members.map((ref) => ref.id),
           owner_id:
             boardData.owner_id &&
-              typeof boardData.owner_id === "object" &&
+              typeof boardData.owner_id === 'object' &&
               boardData.owner_id.id
               ? boardData.owner_id.id
               : boardData.owner_id || null,
         };
-=======
-    boardIds.forEach((boardId) => {
-        const boardRef = doc(boardsCollection, boardId);
-  
-        // Avoid duplicate listeners
-        if (boardListeners[boardId]) return;
 
-        // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
-        const unsubscribe = onSnapshot(boardRef, (snap) => {
-          if (!snap.exists()) return;
-  
-          const boardData = snap.data();
-          const boards = {
-            id: snap.id,
-            name: boardData.name,
-            background_color: boardData.background_color,
-            team_members: boardData.team_members.map((ref) => ref.id),
-            owner_id:
-              boardData.owner_id &&
-              typeof boardData.owner_id === 'object' &&
-              boardData.owner_id.id
-                ? boardData.owner_id.id
-                : boardData.owner_id || null,
-          };
-
-          dispatch({
-            type: SET_BOARDS,
-            payload: { boards: [boards] },
-          });
+        dispatch({
+          type: SET_BOARDS,
+          payload: { boards: [boards] },
         });
-  
-        boardListeners[boardId] = unsubscribe;
-        unsubscribers.push(unsubscribe);
->>>>>>> origin/main
       });
-  
-      // Return a cleanup function to stop listening
-      return () => { 
-        unsubscribers.forEach((unsub) => unsub());
-        Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
-      };
+
+      boardListeners[boardId] = unsubscribe;
+      unsubscribers.push(unsubscribe);
+    });
+
+    // Return a cleanup function to stop listening
+    return () => {
+      unsubscribers.forEach((unsub) => unsub());
+      Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
+    };
 
   } catch (error) {
     console.error("Error fetching boards:", error);
