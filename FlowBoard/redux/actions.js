@@ -184,7 +184,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     const newBoard = {
       name: boardData.name,
       background_color: boardData.background_color,
-      team_members: boardData.team_members.map((memberRef) => memberRef.id), // user ids
+      team_members: userId, 
       owner_id: userId,
     };
     const newBoardRef = await addDoc(boardsCollection, newBoard);
@@ -197,14 +197,14 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
 
     console.log("Board created and linked to user successfully!");
 
-    // Dispatch the action to the store with the new board data
+    // dispatch the action to the store with the new board data
     dispatch({
       type: CREATE_BOARD,
       payload: {
         id: newBoardRef.id,
         name: boardData.name,
         background_color: boardData.background_color,
-        team_members: boardData.team_members.map((memberRef) => memberRef.id),
+        team_members: userId,
         owner_id: userId,
       },
     });

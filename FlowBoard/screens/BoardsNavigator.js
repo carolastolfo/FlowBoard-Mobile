@@ -10,7 +10,6 @@ const Tab = createBottomTabNavigator();
 const BoardsNavigator = () => {
     return (
         <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1 }}>
                 <Tab.Navigator
                     initialRouteName="Boards List"
                     screenOptions={({ route }) => ({
@@ -25,12 +24,12 @@ const BoardsNavigator = () => {
                         },
                         tabBarActiveTintColor: '#6D72C3',
                         tabBarInactiveTintColor: 'gray',
+                        headerShown: false,
                     })}
                 >
                     <Tab.Screen name="Boards List" component={BoardsScreen} />
                     <Tab.Screen name="Manage Join Requests" component={BoardsManagingScreen} />
                 </Tab.Navigator>
-            </SafeAreaView>
         </SafeAreaProvider>
     );
 };

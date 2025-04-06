@@ -31,12 +31,6 @@ const CreateBoardScreen = ({ navigation }) => {
       return;
     }
 
-    // check if teamMembers is an array of user IDs, can be left empty for now
-    // if (!Array.isArray(teamMembers)) {
-    //   setError("Team members must be a valid list of user IDs.");
-    //   return;
-    // }
-
     setLoading(true);
 
     dispatch(createBoard(currentUserId, { name: boardName, background_color: backgroundColor, team_members: teamMembers }))
@@ -78,16 +72,6 @@ const CreateBoardScreen = ({ navigation }) => {
           />
         </View>
 
-        {/* <View style={styles.inputContainer}>
-          <Text style={styles.label}>Team Members (IDs)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter user IDs separated by commas"
-            value={teamMembers.join(", ")}
-            onChangeText={(text) => setTeamMembers(text.split(",").map((id) => id.trim()))}
-          />
-        </View> */}
-
         <TouchableOpacity
           style={styles.button}
           onPress={handleCreateBoard}
@@ -107,13 +91,13 @@ const CreateBoardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 20,
     paddingTop: 20,
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingVertical: 30,
   },
   title: {
@@ -137,16 +121,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#6D72C3',
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#6D72C3',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
