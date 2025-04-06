@@ -15,6 +15,7 @@ const initialState = {
   error: "",
 };
 
+
 export const boardReducer = (state = initialState, action) => {
   console.log(`boardReducer received action: ${action.type}
         \n payload: ${JSON.stringify(action.payload)}`);

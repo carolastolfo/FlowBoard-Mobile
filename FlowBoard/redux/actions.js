@@ -304,6 +304,7 @@ export const rejectJoin = (joinRequestId) => async dispatch => {
 };
 
 //Boards list
+const boardListeners = {};
 export const setBoards = (currentUserId) => async (dispatch) => {
   try {
     // Fetch user document
@@ -320,30 +321,48 @@ export const setBoards = (currentUserId) => async (dispatch) => {
     // Extract string IDs from DocumentReferences
     const boardIds = userData.boards.map((boardRef) => boardRef.id);
 
-    // Fetch each board document by ID
-    const boardRefs = boardIds.map((boardId) => doc(db, "boards", boardId));
-    const boardSnapshots = await Promise.all(boardRefs.map(getDoc));
+    const unsubscribers = []; // store unsubscribe functions
 
-    // Convert board data and replace Firestore DocumentReference with its ID
-    const boards = boardSnapshots
-      .filter((snap) => snap.exists())
-      .map((snap) => {
-        const boardData = snap.data();
-        return {
-          id: snap.id,
-          name: boardData.name,
-          background_color: boardData.background_color,
-          team_members: boardData.team_members.map((memberRef) => memberRef.id), // No ref just user ID
-          owner_id:
-            boardData.owner_id &&
-            typeof boardData.owner_id === "object" &&
-            boardData.owner_id.id
-              ? boardData.owner_id.id
-              : boardData.owner_id || null,
-        };
+    boardIds.forEach((boardId) => {
+        const boardRef = doc(boardsCollection, boardId);
+  
+        // Avoid duplicate listeners
+        if (boardListeners[boardId]) return;
+
+        // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
+        const unsubscribe = onSnapshot(boardRef, (snap) => {
+          if (!snap.exists()) return;
+  
+          const boardData = snap.data();
+          const boards = {
+            id: snap.id,
+            name: boardData.name,
+            background_color: boardData.background_color,
+            team_members: boardData.team_members.map((ref) => ref.id),
+            owner_id:
+              boardData.owner_id &&
+              typeof boardData.owner_id === 'object' &&
+              boardData.owner_id.id
+                ? boardData.owner_id.id
+                : boardData.owner_id || null,
+          };
+
+          dispatch({
+            type: SET_BOARDS,
+            payload: { boards: [boards] },
+          });
+        });
+  
+        boardListeners[boardId] = unsubscribe;
+        unsubscribers.push(unsubscribe);
       });
+  
+      // Return a cleanup function to stop listening
+      return () => { 
+        unsubscribers.forEach((unsub) => unsub());
+        Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
+      };
 
-    dispatch({ type: SET_BOARDS, payload: { boards } });
   } catch (error) {
     console.error("Error fetching boards:", error);
   }

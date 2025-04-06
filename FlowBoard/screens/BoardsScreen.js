@@ -1,6 +1,7 @@
-import { useDispatch, useSelector } from "react-redux";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { searchBoard, setBoards, joinBoard, logoutUser } from '../redux/actions'
+import { useDispatch, useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -9,99 +10,151 @@ import {
   StyleSheet,
   FlatList,
 } from "react-native";
-import { searchBoard, setBoards, joinBoard } from "../redux/actions";
-
-const BoardsScreen = ({ navigation }) => {
-  const currentUserId = useSelector((state) => state.usersRoot.currentUser.id);
-  const currentUser = useSelector((state) => state.usersRoot.currentUser);
 
   const dispatch = useDispatch();
 
-  const [boardName, setBoardName] = useState("");
-  const boards = useSelector((state) => state.boardsRoot.boards);
-  const error = useSelector((state) => state.boardsRoot.error);
+const BoardsScreen = ({ navigation }) => {
+    const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
+    const currentUser = useSelector(state => state.usersRoot.currentUser)
+    const boards = useSelector(state => state.boardsRoot.boards);
+    const error = useSelector(state => state.boardsRoot.error);
+    const dispatch = useDispatch();
+    const [boardName, setBoardName] = useState("");
 
-  useEffect(() => {
-    dispatch(setBoards(currentUserId));
-  }, [dispatch]);
+    useEffect(() => {
+        let cleanup;
+    
+        (async () => {
+            cleanup = await dispatch(setBoards(currentUserId)); // returns unsubscribe function
+        })();
+    
+        return () => {
+            if (cleanup) cleanup(); // stop all listeners on unmount
+        };
+    }, [dispatch, currentUserId]);
+    
 
-  const handleSearch = () => {
-    if (boardName) {
-      dispatch(searchBoard(boardName));
-    }
-  };
+    const handleSearch = () => {
+        if (boardName) {
+            dispatch(searchBoard(boardName));
+        }
+    };
 
-  const handleReset = () => {
-    setBoardName("");
-    dispatch(setBoards(currentUserId));
-  };
 
-  // To redirect to board
-  const handleRedirect = (boardId) => {
-    setTimeout(() => {
-      console.log("Navigating to board:", boardId);
-      navigation.navigate("KanbanBoard", { boardId });
-    }, 500);
-  };
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerRight: () =>
+            currentUser ? (
+              <TouchableOpacity onPress={handleLogout}>
+                <Text style={{ color: "#6D72C3", marginRight: 5 }}>Logout</Text>
+              </TouchableOpacity>
+            ) : null,
+        });
+      }, [navigation, currentUser]);
+    
+      const handleLogout = () => {
+        dispatch(logoutUser());
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      };
 
-  const handleJoinBoard = async (boardId) => {
-    console.log("Joining board:", boardId);
-    dispatch(joinBoard(boardId, currentUserId));
-    const success = await dispatch(joinBoard(boardId, currentUserId));
+    
+    const handleReset = () => {
+        setBoardName("");
+        dispatch(setBoards(currentUserId));
+    };
 
-    if (!success) {
-      alert("You already requested to join this board.");
-    } else {
-      alert("Request sent successfully. Please wait for the owner's approval.");
-    }
-  };
+    // To redirect to board
+    const handleRedirect = (boardId) => {
+        setTimeout(() => {
+            console.log("Navigating to board:", boardId);
+            navigation.navigate("KanbanBoard", { boardId });
+        }, 500);
+    };
 
-  const renderBoardItem = ({ item }) => (
-    <TouchableOpacity
-      style={[styles.boardCard, { backgroundColor: item.background_color }]}
-      onPress={() => handleRedirect(item.id)}
-    >
-      <Text style={styles.boardTitle}>{item.name}</Text>
-      <Text style={styles.teamMembers}>
-        Team Members: {item.team_members.length}
-      </Text>
+    const handleJoinBoard = async (boardId) => {
+        console.log("Joining board:", boardId);
+        dispatch(joinBoard(boardId, currentUserId));
+        const success = await dispatch(joinBoard(boardId, currentUserId));
 
-      <View style={styles.badgeContainer}>
-        {item.owner_id === currentUserId && (
-          <Text style={styles.badge}>Owner</Text>
-        )}
-        {!item.team_members.includes(currentUserId) && (
-          <TouchableOpacity
-            style={styles.joinButton}
-            onPress={() => handleJoinBoard(item.id, item.team_members)}
-          >
-            <Text style={styles.badge}>Join</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </TouchableOpacity>
-  );
+        if (!success) {
+            alert("You already requested to join this board.");
+        } else {
+            alert("Request sent successfully. Please wait for the owner's approval.");
+        }
+    };
 
-  return (
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>
-          {currentUser ? currentUser.username + "'s" : "My"} Boards
-        </Text>
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Search by Board Name"
-            style={styles.searchInput}
-            value={boardName}
-            onChangeText={setBoardName}
-          />
-          <TouchableOpacity onPress={handleSearch} style={styles.button}>
-            <Text style={styles.buttonText}>Search</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleReset} style={styles.button}>
-            <Text style={styles.buttonText}>Show All</Text>
-          </TouchableOpacity>
+    const renderBoardItem = ({ item }) => (
+
+        <TouchableOpacity
+            style={[styles.boardCard, { backgroundColor: item.background_color }]}
+            onPress={() => handleRedirect(item.id)}
+        >
+            <Text style={styles.boardTitle}>{item.name}</Text>
+            <Text style={styles.teamMembers}>Team Members: {item.team_members.length}</Text>
+
+            <View style={styles.badgeContainer}>
+            {item.owner_id === currentUserId &&
+                <Text style={styles.badge}>Owner</Text>
+            }
+            {!item.team_members.includes(currentUserId) && (
+                <TouchableOpacity
+                    style={styles.joinButton}
+                    onPress={() => handleJoinBoard(item.id, item.team_members)}
+                >
+                    <Text style={styles.badge}>Join</Text>
+                </TouchableOpacity>
+            )}
+            </View>
+        </TouchableOpacity>
+    );
+
+    return (
+        <View style={styles.container}>
+            {/* Header */}
+            <View style={styles.header}>
+                <Text style={styles.title}>{currentUser ? currentUser.username + "'s" : "My"} Boards</Text>
+                <View style={styles.searchContainer}>
+                    <TextInput
+                        placeholder="Search by Board Name"
+                        style={styles.searchInput}
+                        value={boardName}
+                        onChangeText={setBoardName}
+                    />
+                    <TouchableOpacity onPress={handleSearch} style={styles.button}>
+                        <Text style={styles.buttonText}>Search</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleReset} style={styles.button}>
+                        <Text style={styles.buttonText}>Show All</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+
+            {/* Error message */}
+            {error ? <Text style={styles.errorMessage}>{error}</Text> : null}
+
+            {/* Boards Grid */}
+            {boards.length > 0 ? (
+                <FlatList
+                    data={boards}
+                    renderItem={renderBoardItem}
+                    keyExtractor={item => item.id}
+                    numColumns={2}
+                    style={styles.boardsGrid}
+                />
+            ) : (
+                <Text style={styles.noBoards}>No boards found.</Text>
+            )}
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate('CreateBoard')}
+            >
+
+                <Text style={styles.buttonText}>Create a New Board</Text>
+
+            </TouchableOpacity>
         </View>
       </View>
 
