@@ -10,7 +10,10 @@ import EditTaskModal from '../utils/EditTaskModal';
 import DueDate from '../utils/DueDate';
 
 
-const DoneScreen = ({ navigation }) => {
+const DoneScreen = ({ navigation, route }) => {
+
+  const { boardId } = route.params;
+
   const dispatch = useDispatch();
   const [newTask, setNewTask] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -56,7 +59,7 @@ const DoneScreen = ({ navigation }) => {
 
         <TouchableOpacity style={globalStyles.addButton} onPress={() => {
           if (newTask.trim()) {
-            handleAddTask(dispatch, newTask, currentScreen.toLowerCase());
+            handleAddTask(dispatch, newTask, boardId, currentScreen.toLowerCase());
             setNewTask("");
           }
         }}

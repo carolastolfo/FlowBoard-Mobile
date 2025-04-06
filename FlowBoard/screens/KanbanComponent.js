@@ -8,7 +8,9 @@ import globalStyles from '../shared/globalStyles';
 
 const Tab = createBottomTabNavigator()
 
-const KanbanComponent = () => {
+const KanbanComponent = ({ route }) => {
+  console.log("KANBAN", route)
+  const { boardId } = route.params;
 
   const tabOptions = ({ route }) => (
     {
@@ -50,9 +52,21 @@ const KanbanComponent = () => {
     <SafeAreaProvider>
       <SafeAreaView style={globalStyles.safeArea}>
         <Tab.Navigator screenOptions={tabOptions}>
-          <Tab.Screen component={TodoScreen} name='To-Do' />
-          <Tab.Screen component={DoingScreen} name='Doing' />
-          <Tab.Screen component={DoneScreen} name='Done' />
+          <Tab.Screen
+            component={TodoScreen}
+            name='To-Do'
+            initialParams={{ boardId }}
+          />
+          <Tab.Screen
+            component={DoingScreen}
+            name='Doing'
+            initialParams={{ boardId }}
+          />
+          <Tab.Screen
+            component={DoneScreen}
+            name='Done'
+            initialParams={{ boardId }}
+          />
         </Tab.Navigator>
       </SafeAreaView>
     </SafeAreaProvider>

@@ -5,26 +5,26 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'r
 import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
 
 
-const BoardsScreen = ( {navigation} ) => {
+const BoardsScreen = ({ navigation }) => {
     const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
     const currentUser = useSelector(state => state.usersRoot.currentUser)
-    
+
     const dispatch = useDispatch();
 
     const [boardName, setBoardName] = useState("");
     const boards = useSelector(state => state.boardsRoot.boards);
     const error = useSelector(state => state.boardsRoot.error);
-    
+
     useEffect(() => {
         dispatch(setBoards(currentUserId));
     }, [dispatch]);
-    
+
     const handleSearch = () => {
-        if (boardName){
+        if (boardName) {
             dispatch(searchBoard(boardName));
         }
     };
-    
+
     const handleReset = () => {
         setBoardName("");
         dispatch(setBoards(currentUserId));
@@ -50,7 +50,7 @@ const BoardsScreen = ( {navigation} ) => {
     };
 
     const renderBoardItem = ({ item }) => (
-        
+
         <TouchableOpacity
             style={[styles.boardCard, { backgroundColor: item.background_color }]}
             onPress={() => handleRedirect(item.id)}
@@ -61,13 +61,13 @@ const BoardsScreen = ( {navigation} ) => {
                 <Text style={styles.ownerBadge}>Owner</Text>
             }
             {!item.team_members.includes(currentUserId) && (
-                    <TouchableOpacity
-                        style={styles.joinButton}
-                        onPress={() => handleJoinBoard(item.id, item.team_members)}
-                    >
-                        <Text style={styles.ownerBadge}>Join</Text>
-                    </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                    style={styles.joinButton}
+                    onPress={() => handleJoinBoard(item.id, item.team_members)}
+                >
+                    <Text style={styles.ownerBadge}>Join</Text>
+                </TouchableOpacity>
+            )}
         </TouchableOpacity>
     );
 
@@ -107,14 +107,14 @@ const BoardsScreen = ( {navigation} ) => {
             ) : (
                 <Text style={styles.noBoards}>No boards found.</Text>
             )}
-                      <TouchableOpacity 
-                        style={styles.button} 
-                        onPress={() => navigation.navigate('CreateBoard')}
-                      >
+            <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate('CreateBoard')}
+            >
 
-                          <Text style={styles.buttonText}>Create a New Board</Text>
+                <Text style={styles.buttonText}>Create a New Board</Text>
 
-                      </TouchableOpacity>
+            </TouchableOpacity>
         </View>
     );
 };
