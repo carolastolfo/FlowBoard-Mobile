@@ -7,8 +7,6 @@ import RegisterScreen from "./screens/RegisterScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
 import BoardsNavigator from './screens/BoardsNavigator';
-import KanbanComponent from './screens/KanbanComponent';
-
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
