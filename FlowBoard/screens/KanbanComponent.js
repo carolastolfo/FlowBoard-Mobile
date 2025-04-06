@@ -8,7 +8,8 @@ import globalStyles from '../shared/globalStyles';
 
 const Tab = createBottomTabNavigator()
 
-const KanbanComponent = () => {
+const KanbanComponent = ({route}) => {
+  console.log("kanbabnnnsdlfjjsdlfjsdlkf",route)
 
   const tabOptions = ({ route }) => (
     {

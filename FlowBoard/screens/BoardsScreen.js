@@ -1,24 +1,29 @@
 import { useDispatch, useSelector } from 'react-redux';
-
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { searchBoard, setBoards, joinBoard, logoutUser } from '../redux/actions'
 
 
-
 const BoardsScreen = ({ navigation }) => {
     const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
     const currentUser = useSelector(state => state.usersRoot.currentUser)
-
-    const dispatch = useDispatch();
-
-    const [boardName, setBoardName] = useState("");
     const boards = useSelector(state => state.boardsRoot.boards);
     const error = useSelector(state => state.boardsRoot.error);
+    const dispatch = useDispatch();
+    const [boardName, setBoardName] = useState("");
 
     useEffect(() => {
-        dispatch(setBoards(currentUserId));
-    }, [dispatch]);
+        let cleanup;
+    
+        (async () => {
+            cleanup = await dispatch(setBoards(currentUserId)); // returns unsubscribe function
+        })();
+    
+        return () => {
+            if (cleanup) cleanup(); // stop all listeners on unmount
+        };
+    }, [dispatch, currentUserId]);
+    
 
     const handleSearch = () => {
         if (boardName) {
@@ -126,7 +131,7 @@ const BoardsScreen = ({ navigation }) => {
                 <FlatList
                     data={boards}
                     renderItem={renderBoardItem}
-                    keyExtractor={item => item.id.toString()}
+                    keyExtractor={item => item.id}
                     numColumns={2}
                     style={styles.boardsGrid}
                 />
