@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
       // Reset the navigation stack to Home to remove Login from history
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'Boards' }],
       });
     }
   }, [currentUser, navigation]);
@@ -120,11 +120,11 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#E5D4ED',
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: 'flex-start',
   },
   logoContainer: {
     alignItems: "center",
@@ -152,16 +152,16 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#6D72C3',
     fontSize: 16,
   },
   loginButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#6D72C3',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",

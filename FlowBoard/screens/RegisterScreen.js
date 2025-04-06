@@ -173,14 +173,14 @@ const RegisterScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#E5D4ED',
   },
   scrollContainer: {
     flexGrow: 1,
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingVertical: 30,
   },
   logoContainer: {
@@ -209,16 +209,16 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#6D72C3',
     fontSize: 16,
   },
   registerButton: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#6D72C3',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   loginLink: {
-    color: "#007AFF",
+    color: '#6D72C3',
     fontSize: 14,
     fontWeight: "600",
   },

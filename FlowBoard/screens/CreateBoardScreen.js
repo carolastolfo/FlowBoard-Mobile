@@ -31,12 +31,6 @@ const CreateBoardScreen = ({ navigation }) => {
       return;
     }
 
-    // check if teamMembers is an array of user IDs, can be left empty for now
-    // if (!Array.isArray(teamMembers)) {
-    //   setError("Team members must be a valid list of user IDs.");
-    //   return;
-    // }
-
     setLoading(true);
 
     dispatch(createBoard(currentUserId, { name: boardName, background_color: backgroundColor, team_members: teamMembers }))
@@ -77,16 +71,6 @@ const CreateBoardScreen = ({ navigation }) => {
             onChangeText={setBackgroundColor}
           />
         </View>
-
-        {/* <View style={styles.inputContainer}>
-          <Text style={styles.label}>Team Members (IDs)</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter user IDs separated by commas"
-            value={teamMembers.join(", ")}
-            onChangeText={(text) => setTeamMembers(text.split(",").map((id) => id.trim()))}
-          />
-        </View> */}
 
         <TouchableOpacity
           style={styles.button}

@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { data } from '../data/data';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
+import { searchBoard, setBoards, joinBoard, acceptJoin, logoutUser } from '../redux/actions'
 
 
 const BoardsScreen = ( {navigation} ) => {
@@ -24,6 +23,26 @@ const BoardsScreen = ( {navigation} ) => {
             dispatch(searchBoard(boardName));
         }
     };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+          headerRight: () =>
+            currentUser ? (
+              <TouchableOpacity onPress={handleLogout}>
+                <Text style={{ color: "#6D72C3", marginRight: 5 }}>Logout</Text>
+              </TouchableOpacity>
+            ) : null,
+        });
+      }, [navigation, currentUser]);
+    
+      const handleLogout = () => {
+        dispatch(logoutUser());
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        });
+      };
+
     
     const handleReset = () => {
         setBoardName("");

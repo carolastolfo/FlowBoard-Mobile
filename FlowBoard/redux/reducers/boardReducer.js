@@ -7,7 +7,6 @@ import {
   REJECT_JOIN,
   FETCH_JOIN_REQUESTS,
 } from "../actionTypes";
-import { data } from "../../data/data";
 
 
 const initialState = {
