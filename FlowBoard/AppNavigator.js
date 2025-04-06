@@ -5,14 +5,14 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
-
+import BoardsWithHeader from "./screens/BoardsWithHeader";
 import BoardsNavigator from "./screens/BoardsNavigator";
-
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+  
 
   return (
     <NavigationContainer>
@@ -34,7 +34,7 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Boards"
-          component={BoardsNavigator}
+          component={BoardsWithHeader}
           options={{ title: "Boards" }}
         />
         <Stack.Screen
