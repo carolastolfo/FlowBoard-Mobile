@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchJoinRequests, acceptJoin, rejectJoin } from '../redux/actions';
 
 const BoardsManagingScreen = () => {
-    //const currentUserId = "TRK8Ig0TxD2Ghm9XiUsi"; // Replace with Auth user ID
     const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
     const dispatch = useDispatch();
 
