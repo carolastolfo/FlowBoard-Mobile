@@ -5,7 +5,9 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
+
 import BoardsNavigator from "./screens/BoardsNavigator";
+
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
