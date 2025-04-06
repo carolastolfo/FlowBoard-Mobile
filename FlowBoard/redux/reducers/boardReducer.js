@@ -9,12 +9,12 @@ import {
 } from "../actionTypes";
 
 
+
 const initialState = {
   boards: [],
   joinRequests: [],
   error: "",
 };
-
 
 export const boardReducer = (state = initialState, action) => {
   console.log(`boardReducer received action: ${action.type}
