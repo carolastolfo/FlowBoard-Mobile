@@ -1,3 +1,4 @@
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./screens/HomeScreen";
@@ -8,12 +9,11 @@ import CreateBoardScreen from "./screens/CreateBoardScreen";
 import BoardsWithHeader from "./screens/BoardsWithHeader";
 import BoardsNavigator from "./screens/BoardsNavigator";
 
+
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
