@@ -6,7 +6,8 @@ import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
-import BoardsNavigator from './screens/BoardsNavigator';
+import BoardsWithHeader from "./screens/BoardsWithHeader";
+import BoardsNavigator from "./screens/BoardsNavigator";
 
 
 // Create a stack navigator
@@ -33,10 +34,8 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Boards"
-
-          component={BoardsNavigator}
-          options={{ title: 'Boards' }}
-
+          component={BoardsWithHeader}
+          options={{ title: "Boards" }}
         />
         <Stack.Screen
           name="KanbanBoard"

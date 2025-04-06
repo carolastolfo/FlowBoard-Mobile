@@ -91,13 +91,13 @@ const CreateBoardScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 20,
     paddingTop: 20,
   },
   contentContainer: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     paddingVertical: 30,
   },
   title: {
@@ -121,16 +121,16 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: "white",
+    backgroundColor: '#E5D4ED',
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#ddd",
+    borderColor: '#6D72C3',
     fontSize: 16,
   },
   button: {
-    backgroundColor: "#007AFF",
+    backgroundColor: '#6D72C3',
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",

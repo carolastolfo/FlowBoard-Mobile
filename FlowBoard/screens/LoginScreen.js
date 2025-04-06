@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View style={styles.contentContainer}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>Kanban Board</Text>
+          <Text style={styles.logoText}>FlowBoard</Text>
         </View>
 
         <View style={styles.formContainer}>
