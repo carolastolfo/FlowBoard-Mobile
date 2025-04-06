@@ -1,8 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { data } from '../data/data';
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { searchBoard, setBoards, joinBoard, acceptJoin } from '../redux/actions'
+import { searchBoard, setBoards, joinBoard } from '../redux/actions'
 
 
 const BoardsScreen = ( {navigation} ) => {
