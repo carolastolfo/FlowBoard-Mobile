@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import BoardsScreen from './BoardsScreen';
 import BoardsManagingScreen from './BoardsManagingScreen';
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
