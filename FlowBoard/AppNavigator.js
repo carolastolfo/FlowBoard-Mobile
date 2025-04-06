@@ -1,11 +1,14 @@
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "./screens/HomeScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
-import BoardsScreen from "./screens/BoardsScreen";
 import KanbanComponent from "./screens/KanbanComponent";
 import CreateBoardScreen from "./screens/CreateBoardScreen";
+import BoardsNavigator from './screens/BoardsNavigator';
+import KanbanComponent from './screens/KanbanComponent';
+
 
 // Create a stack navigator
 const Stack = createNativeStackNavigator();
@@ -31,8 +34,10 @@ const AppNavigator = () => {
         />
         <Stack.Screen
           name="Boards"
-          component={BoardsScreen}
-          options={{ title: "Boards" }}
+
+          component={BoardsNavigator}
+          options={{ title: 'Boards' }}
+
         />
         <Stack.Screen
           name="KanbanBoard"

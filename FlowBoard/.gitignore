@@ -2,8 +2,7 @@
 
 # dependencies
 node_modules/
-.env
-FlowBoard/config/firebaseConfig.js
+.my_settings.js
 
 
 # Expo

@@ -18,7 +18,7 @@ import {
   TOGGLE_COMPLETION_STATUS,
   UPDATE_TASK_DUE_DATE,
   JOIN_BOARD,
-  ACCEPT_JOIN,
+  ACCEPT_JOIN, REJECT_JOIN, FETCH_JOIN_REQUESTS
 } from "./actionTypes";
 import { db, auth } from "../config/firebaseConfig";
 import {
@@ -55,7 +55,6 @@ export const registerUser = (username, email, password) => {
   console.log("registerUser action creator called with:", username, email);
   return async (dispatch) => {
     dispatch({ type: REGISTER_REQUEST });
-
     try {
       console.log("Attempting to create user in Firebase");
       // create user with email/password in firebase authentication
@@ -165,6 +164,7 @@ export const logoutUser = () => {
 
       dispatch({ type: LOGOUT_SUCCESS });
       console.log("User logged out successfully");
+      
     } catch (error) {
       console.error("Logout failed:", error.message);
 
@@ -175,6 +175,7 @@ export const logoutUser = () => {
     }
   };
 };
+
 
 // create board
 export const createBoard = (userId, boardData) => async (dispatch) => {
@@ -210,6 +211,96 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
   } catch (error) {
     console.error("Error creating board or linking to user:", error);
   }
+}
+
+//  Join requests list
+export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
+    try {
+        const boardsSnapshot = await getDocs(boardsCollection);
+        const ownedBoards = [];
+
+        // Get boards that current user is an owner
+        boardsSnapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.owner_id.id === currentUserId) {
+                ownedBoards.push({ id: docSnap.id, ...data });
+            }
+        });
+
+        const joinRequests = [];
+
+        // Get join request for each board
+        for (const board of ownedBoards) {
+            const q = query(
+                joinRequestsCollection,
+                where('boardId', '==', board.id),
+                where('status', '==', 'pending')
+            );
+
+            const reqSnapshot = await getDocs(q);
+            for (const reqDoc of reqSnapshot.docs) {
+                const request = reqDoc.data();
+
+                // Get requested user info
+                const userRef = doc(usersCollection, request.userId);
+                const userSnap = await getDoc(userRef);
+                const username = userSnap.exists() ? userSnap.data().username : 'Unknown User';
+
+                joinRequests.push({
+                    id: reqDoc.id,
+                    boardId: request.boardId,
+                    userId: request.userId,
+                    username,
+                });
+            }
+        }
+
+        dispatch({
+            type: FETCH_JOIN_REQUESTS,
+            payload: joinRequests,
+        });
+    } catch (error) {
+        console.error("Failed to fetch join requests:", error);
+    }
+};
+
+// Accept join request
+export const acceptJoin = (joinRequest) => async dispatch => {
+    try {
+        const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
+
+        // Add user to team_members
+        const boardRef = doc(boardsCollection, boardId);
+        await updateDoc(boardRef, {
+            team_members: arrayUnion(`/users/${userId}`)
+        });
+
+        // Update join request status
+        const joinRequestRef = doc(joinRequestsCollection, requestId);
+        await updateDoc(joinRequestRef, {
+            status: "accepted"
+        });
+
+        dispatch({ type: ACCEPT_JOIN, payload: requestId });
+    } catch (error) {
+        console.error("Failed to accept join request", error);
+    }
+};
+
+// Reject join request
+export const rejectJoin = (joinRequestId) => async dispatch => {
+    try {
+        const joinRequestRef = doc(joinRequestsCollection, joinRequestId);
+        
+        // Update join request status
+        await updateDoc(joinRequestRef, {
+            status: "rejected"
+        });
+
+        dispatch({ type: REJECT_JOIN, payload: joinRequestId });
+    } catch (error) {
+        console.error("Failed to reject join request", error);
+    }
 };
 
 //Boards list
@@ -335,12 +426,7 @@ export const joinBoard = (boardId, userId) => async (dispatch) => {
   }
 };
 
-// Accept join request
-export const acceptJoin = () => async (dispatch) => {
-  // add requested UserId to related board's team_members and change join_request doc's status field to completed
-};
-
-// Board
+// tasks
 export const fetchTasks = () => async (dispatch) => {
   try {
     console.log(`Trying to fetch tasks to database.`);
