@@ -18,6 +18,7 @@ import {
   TOGGLE_COMPLETION_STATUS,
   UPDATE_TASK_DUE_DATE,
   ADD_TAG_TO_TASK,
+  DELETE_TAG,
   JOIN_BOARD,
   ACCEPT_JOIN, REJECT_JOIN, FETCH_JOIN_REQUESTS
 } from "./actionTypes";
@@ -42,6 +43,7 @@ import {
   getDoc,
   setDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 
 
@@ -593,50 +595,56 @@ export const updateTaskDueDate =
     };
 
 // Add Tags
-// export const addTagToTask =
-//   ({ taskId, tag }) =>
-//     async (dispatch) => {
-//       try {
-//         console.log(
-//           `Trying to add tag for task ID: ${taskId} with tag: ${tag}`
-//         );
-//         const docRef = doc(db, "kanbantasks", taskId);
-//         await updateDoc(docRef, { tag });
-
-//         console.log("Tag successfully added!");
-
-//         dispatch({
-//           type: ADD_TAG_TO_TASK,
-//           payload: { taskId, tag },
-//         });
-
-//       } catch (error) {
-//         console.error("Error updating tag:", error);
-//       }
-//     };
-
 export const addTagToTask =
-  ({ taskId, tag }) =>
-    async (dispatch) => {
-      try {
-        console.log(
-          `Trying to add tag for task ID: ${taskId} with tag: ${tag}`
-        );
-        const docRef = doc(db, "kanbantasks", taskId);
-        await updateDoc(docRef, { tag: arrayUnion(...tag) });
+  ({ taskId, tag }) => async (dispatch) => {
+    try {
+      console.log(
+        `Trying to add tag for task ID: ${taskId} with tag: ${tag}`
+      );
+      const docRef = doc(db, "kanbantasks", taskId);
+      await updateDoc(docRef, { tag: arrayUnion(...tag) });
 
-        console.log("Tag successfully added!");
+      console.log("Tag successfully added!");
 
-        dispatch({
-          type: ADD_TAG_TO_TASK,
-          payload: { taskId, tag },
-        });
+      dispatch({
+        type: ADD_TAG_TO_TASK,
+        payload: { taskId, tag },
+      });
 
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
-    };
+    } catch (error) {
+      console.error("Error updating tag:", error);
+    }
+  };
 
+// Delete Tag
+export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
+
+  // if (Array.isArray(tag)) {
+  //   tag = tag[0];
+  //   console.log("Using the first item from the array:", tag);
+  // }
+
+  try {
+    console.log(`Trying to delete tag for task ID : ${taskId} with tag: ${tag}`);
+
+    const docRef = doc(db, "kanbantasks", taskId);
+
+    console.log("Tag being deleted: ", tag);
+    await updateDoc(docRef, {
+      tag: arrayRemove(tag),
+    });
+
+    console.log("Tag successfully deleted!");
+
+    dispatch({
+      type: DELETE_TAG,
+      payload: { taskId, tag },
+    });
+
+  } catch (error) {
+    console.error("Error deleting the tag: ", error);
+  }
+};
 
 
 

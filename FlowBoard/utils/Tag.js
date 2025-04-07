@@ -8,24 +8,11 @@ const Tag = ({ isOpen, closeModal, task, taskId }) => {
   const dispatch = useDispatch();
   const [tag, setTag] = useState("");
 
-  // useEffect(() => {
-  //   if (task) {
-  //     setTag(task.tag || "");
-  //   }
-  // }, [task]);
-
-  // useEffect(() => {
-  //   if (task) {
-  //     setTag(task.tag.join(", ") || "");
-  //   }
-  // }, [task]);
-
   useEffect(() => {
-    if (task && task.tag) {
-      setTag(Array.isArray(task.tag) ? task.tag.join(", ") : task.tag);
+    if (task) {
+      setTag(task.tag || "");
     }
   }, [task]);
-
 
   useEffect(() => {
     if (isOpen) {
@@ -33,16 +20,8 @@ const Tag = ({ isOpen, closeModal, task, taskId }) => {
     }
   }, [isOpen]);
 
-  // const handleSave = () => {
-  //   if (tag && tag.length > 0) {
-  //     dispatch(addTagToTask({ taskId, tag }));
-  //   }
-  //   closeModal();
-  // };
-
   const handleSave = () => {
     if (tag.trim().length > 0) {
-      // split por vírgula e tira espaços
       const tagArray = tag.split(',').map(tag => tag.trim());
       dispatch(addTagToTask({ taskId, tag: tagArray }));
     }
@@ -58,6 +37,7 @@ const Tag = ({ isOpen, closeModal, task, taskId }) => {
             style={globalStyles.inputStyle}
             value={tag}
             onChangeText={setTag}
+            placeholder="Enter a tag"
           />
 
           <View style={globalStyles.itemContainer}>

@@ -140,8 +140,11 @@ const globalStyles = StyleSheet.create({
     marginTop: 5,
   },
   tagText: {
-    backgroundColor: '#C7EF00',
-    color: '#333',
+    // backgroundColor: '#C7EF00',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  tagStyle: {
     marginRight: 6,
     marginBottom: 6,
     padding: 5,

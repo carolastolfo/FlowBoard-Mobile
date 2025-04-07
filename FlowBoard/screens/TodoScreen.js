@@ -6,6 +6,7 @@ import globalStyles from '../shared/globalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { handleAddTask } from '../utils/addTask';
 import { handleDelete } from '../utils/deleteTask';
+import { handleDeleteTag } from '../utils/deleteTag';
 import EditTaskModal from '../utils/EditTaskModal';
 import DueDate from '../utils/DueDate';
 import Tag from '../utils/Tag';
@@ -33,13 +34,13 @@ const TodoScreen = ({ navigation, route }) => {
   const openTagModal = () => setIsTagOpen(true);
   const closeTagModal = () => setIsTagOpen(false);
 
+  const tagColors = ["#EB1660", "#4F9D69", "#E28413"];
+
   useEffect(() => {
     const taskListener = dispatch(fetchTasks())
 
     return () => taskListener
   }, [dispatch]);
-
-  // const taskList = useSelector((state) => state.kanbantasks.listOfTasks);
 
   // const taskList = useSelector((state) =>
   //   state.kanbantasks.listOfTasks ? state.kanbantasks.listOfTasks.filter(task => task.status === 'to-do') : []
@@ -104,32 +105,22 @@ const TodoScreen = ({ navigation, route }) => {
                   <View style={{ gap: 10 }}>
                     <Text style={globalStyles.taskText}>{item.name}</Text>
 
-                    {/* {item.tag && item.tag.length > 0 && (
-                      <View style={globalStyles.tagContainer}>
-                        <Text style={globalStyles.tagText}>{item.tag}</Text>
-                      </View>
-                    )} */}
-                    {/* 
-                    {item.tag && item.tag.length > 0 && (
-                      <View style={globalStyles.tagContainer}>
-                        {Array.isArray(item.tag)
-                          ? item.tag.map((tag, index) => (
-                            <Text key={index} style={globalStyles.tagText}>{tag}</Text>
-                          ))
-                          : <Text style={globalStyles.tagText}>#{item.tag}</Text>
-                        }
-                      </View>
-                    )} */}
-
                     {item.tag && item.tag.length > 0 && (
                       <View style={globalStyles.tagContainer}>
                         {item.tag.map((tag, index) => (
-                          <Text key={index} style={globalStyles.tagText}>{tag}</Text>
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              console.log('Deleting tag:', tag, 'for taskId:', item.id);
+                              handleDeleteTag(dispatch, item.id, tag);
+                            }}
+                            style={[{ backgroundColor: tagColors[index % tagColors.length] }, globalStyles.tagStyle]}
+                          >
+                            <Text style={globalStyles.tagText}>{tag}</Text>
+                          </TouchableOpacity>
                         ))}
                       </View>
                     )}
-
-
                   </View>
                 </View>
               )}
@@ -146,7 +137,6 @@ const TodoScreen = ({ navigation, route }) => {
           <View style={[globalStyles.modalView, { height: 400 }]}>
 
             <Text style={globalStyles.headerStyle}>Status: {currentScreen.toUpperCase()}</Text>
-
 
             <Text>
               Due Date: {taskList?.length > 0
@@ -229,12 +219,11 @@ const TodoScreen = ({ navigation, route }) => {
                 style={globalStyles.buttonContainer}
               >
                 <View style={globalStyles.contentContainer}>
-                  <Icon name='minus-circle' color='white' size={25} />
+                  <Icon name='calendar-check-o' color='white' size={25} />
                   <Text style={globalStyles.textContent}>Due Date</Text>
                 </View>
               </TouchableOpacity>
             </View>
-
 
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
@@ -245,13 +234,11 @@ const TodoScreen = ({ navigation, route }) => {
                 style={globalStyles.buttonContainer}
               >
                 <View style={globalStyles.contentContainer}>
-                  <Icon name='minus-circle' color='white' size={25} />
+                  <Icon name='gg-circle' color='white' size={25} />
                   <Text style={globalStyles.textContent}>Tag</Text>
                 </View>
               </TouchableOpacity>
             </View>
-
-
 
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
