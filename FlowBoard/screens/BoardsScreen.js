@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { searchBoard, setBoards, joinBoard } from '../redux/actions'
 
@@ -11,19 +11,18 @@ const BoardsScreen = ({ navigation }) => {
     const error = useSelector(state => state.boardsRoot.error);
     const dispatch = useDispatch();
     const [boardName, setBoardName] = useState("");
-
+    const cleanupRef = useRef(null); // hold unsubscribe function
+    
     useEffect(() => {
-        let cleanup;
-    
         (async () => {
-            cleanup = await dispatch(setBoards(currentUserId)); // returns unsubscribe function
+            cleanupRef.current = await dispatch(setBoards(currentUserId));
         })();
-    
+
         return () => {
-            if (cleanup) cleanup(); // stop all listeners on unmount
+            if (cleanupRef.current) cleanupRef.current();
         };
-    }, [dispatch, currentUserId]);
-    
+    }, [dispatch]);
+
 
     const handleSearch = () => {
         if (boardName) {
@@ -31,9 +30,12 @@ const BoardsScreen = ({ navigation }) => {
         }
     };
 
-    const handleReset = () => {
+    const handleReset = async () => {
         setBoardName("");
-        dispatch(setBoards(currentUserId));
+        // stop old listeners
+        if (cleanupRef.current) cleanupRef.current();
+        // start fresh listeners
+        cleanupRef.current = await dispatch(setBoards(currentUserId));
     };
 
     // To redirect to board
@@ -66,17 +68,17 @@ const BoardsScreen = ({ navigation }) => {
             <Text style={styles.teamMembers}>Team Members: {item.team_members.length}</Text>
 
             <View style={styles.badgeContainer}>
-            {item.owner_id === currentUserId &&
-                <Text style={styles.badge}>Owner</Text>
-            }
-            {!item.team_members.includes(currentUserId) && (
-                <TouchableOpacity
-                    style={styles.joinButton}
-                    onPress={() => handleJoinBoard(item.id, item.team_members)}
-                >
-                    <Text style={styles.badge}>Join</Text>
-                </TouchableOpacity>
-            )}
+                {item.owner_id === currentUserId &&
+                    <Text style={styles.badge}>Owner</Text>
+                }
+                {!item.team_members.includes(currentUserId) && (
+                    <TouchableOpacity
+                        style={styles.joinButton}
+                        onPress={() => handleJoinBoard(item.id, item.team_members)}
+                    >
+                        <Text style={styles.badge}>Join</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </TouchableOpacity>
     );
