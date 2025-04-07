@@ -12,7 +12,7 @@ const BoardsScreen = ({ navigation }) => {
     const dispatch = useDispatch();
     const [boardName, setBoardName] = useState("");
     const cleanupRef = useRef(null); // hold unsubscribe function
-    
+
     useEffect(() => {
         (async () => {
             cleanupRef.current = await dispatch(setBoards(currentUserId));
@@ -119,14 +119,16 @@ const BoardsScreen = ({ navigation }) => {
             ) : (
                 <Text style={styles.noBoards}>No boards found.</Text>
             )}
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('CreateBoard')}
-            >
+            <View style={{ alignItems: 'center', justifyContent: 'center', height: '50', marginBottom: 60 }}>
+                <TouchableOpacity
+                    style={styles.createButton}
+                    onPress={() => navigation.navigate('CreateBoard')}
+                >
 
-                <Text style={styles.buttonText}>Create a New Board</Text>
+                    <Text style={styles.buttonText}>Create a New Board</Text>
 
-            </TouchableOpacity>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -164,10 +166,18 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         borderRadius: 4,
         justifyContent: 'center',
+        marginBottom: 50
     },
     buttonText: {
         color: 'white',
         fontSize: 14,
+        textAlign: 'center'
+    },
+    createButton: {
+        backgroundColor: '#6D72C3',
+        width: 200,
+        padding: 10,
+        borderRadius: 4,
     },
     errorMessage: {
         color: 'red',
