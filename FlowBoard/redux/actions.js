@@ -19,6 +19,7 @@ import {
   UPDATE_TASK_DUE_DATE,
   ADD_TAG_TO_TASK,
   DELETE_TAG,
+  UPDATE_TASK_STATUS,
   JOIN_BOARD,
   ACCEPT_JOIN, REJECT_JOIN, FETCH_JOIN_REQUESTS
 } from "./actionTypes";
@@ -334,40 +335,40 @@ export const setBoards = (currentUserId) => async (dispatch) => {
       // Avoid duplicate listeners
       if (boardListeners[boardId]) return;
 
-        // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
-        const unsubscribe = onSnapshot(boardRef, (snap) => {
-          if (!snap.exists()) return;
-  
-          const boardData = snap.data();
-          boardsMap[boardId] = {
-            id: boardId,
-            name: boardData.name,
-            background_color: boardData.background_color,
-            team_members: boardData.team_members.map((ref) => ref.id),
-            owner_id:
-              boardData.owner_id &&
+      // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
+      const unsubscribe = onSnapshot(boardRef, (snap) => {
+        if (!snap.exists()) return;
+
+        const boardData = snap.data();
+        boardsMap[boardId] = {
+          id: boardId,
+          name: boardData.name,
+          background_color: boardData.background_color,
+          team_members: boardData.team_members.map((ref) => ref.id),
+          owner_id:
+            boardData.owner_id &&
               typeof boardData.owner_id === 'object' &&
               boardData.owner_id.id
               ? boardData.owner_id.id
               : boardData.owner_id || null,
         };
 
-          dispatch({
-            type: SET_BOARDS,
-            payload: { boards: Object.values(boardsMap) }
-          });
+        dispatch({
+          type: SET_BOARDS,
+          payload: { boards: Object.values(boardsMap) }
         });
-  
-        boardListeners[boardId] = unsubscribe;
-        unsubscribers.push(unsubscribe);
       });
-  
-      // Return a cleanup function to stop listening
-      return () => { 
-        unsubscribers.forEach((unsub) => unsub());
-        Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
-        Object.keys(boardsMap).forEach((id) => delete boardsMap[id]);
-      };
+
+      boardListeners[boardId] = unsubscribe;
+      unsubscribers.push(unsubscribe);
+    });
+
+    // Return a cleanup function to stop listening
+    return () => {
+      unsubscribers.forEach((unsub) => unsub());
+      Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
+      Object.keys(boardsMap).forEach((id) => delete boardsMap[id]);
+    };
 
   } catch (error) {
     console.error("Error fetching boards:", error);
@@ -620,11 +621,7 @@ export const addTagToTask =
 
 // Delete Tag
 export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
-
-  // if (Array.isArray(tag)) {
-  //   tag = tag[0];
-  //   console.log("Using the first item from the array:", tag);
-  // }
+  console.log("Updated listOfTasks:", state.listOfTasks);
 
   try {
     console.log(`Trying to delete tag for task ID : ${taskId} with tag: ${tag}`);
@@ -648,5 +645,26 @@ export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
   }
 };
 
+// Update task status
+export const updateTaskStatus = ({ taskId, newStatus, updatedTask }) => async (dispatch) => {
+
+  try {
+    console.log("Trying to update task status");
+
+    const docRef = doc(db, "kanbantasks", updatedTask.id);
+
+    await updateDoc(docRef, updatedTask);
+
+    console.log("Task successfully updated!");
+
+    dispatch({
+      type: UPDATE_TASK_STATUS,
+      payload: { taskId, newStatus, updatedTask }
+    });
+
+  } catch (error) {
+    console.error("Error updating task: ", error);
+  }
+};
 
 

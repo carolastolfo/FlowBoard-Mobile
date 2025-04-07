@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         borderRadius: 4,
         justifyContent: 'center',
-        marginBottom: 50
     },
     buttonText: {
         color: 'white',
@@ -185,6 +184,7 @@ const styles = StyleSheet.create({
     },
     boardsGrid: {
         flex: 1,
+        marginTop: 0
     },
     boardCard: {
         flex: 1,
