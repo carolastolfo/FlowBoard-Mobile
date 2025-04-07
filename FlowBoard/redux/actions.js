@@ -306,6 +306,7 @@ export const rejectJoin = (joinRequestId) => async dispatch => {
 
 //Boards list
 const boardListeners = {};
+const boardsMap = {};
 export const setBoards = (currentUserId) => async (dispatch) => {
   try {
     // Fetch user document
@@ -335,8 +336,8 @@ export const setBoards = (currentUserId) => async (dispatch) => {
           if (!snap.exists()) return;
   
           const boardData = snap.data();
-          const boards = {
-            id: snap.id,
+          boardsMap[boardId] = {
+            id: boardId,
             name: boardData.name,
             background_color: boardData.background_color,
             team_members: boardData.team_members.map((ref) => ref.id),
@@ -350,7 +351,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
 
           dispatch({
             type: SET_BOARDS,
-            payload: { boards: [boards] },
+            payload: { boards: Object.values(boardsMap) }
           });
         });
   
@@ -362,6 +363,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
       return () => { 
         unsubscribers.forEach((unsub) => unsub());
         Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
+        Object.keys(boardsMap).forEach((id) => delete boardsMap[id]);
       };
 
   } catch (error) {
