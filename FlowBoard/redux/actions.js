@@ -226,7 +226,7 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
     // Get boards that current user is an owner
     boardsSnapshot.forEach(docSnap => {
       const data = docSnap.data();
-      if (data.owner_id.id === currentUserId) {
+      if (data.owner_id === currentUserId) {
         ownedBoards.push({ id: docSnap.id, ...data });
       }
     });
@@ -313,6 +313,7 @@ const boardsMap = {};
 export const setBoards = (currentUserId) => async (dispatch) => {
   try {
     // Fetch user document
+    // User is not the ref inside DB it's a string
     const userDocRef = doc(usersCollection, currentUserId);
     const userSnapshot = await getDoc(userDocRef);
 
