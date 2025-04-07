@@ -230,7 +230,6 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
         ownedBoards.push({ id: docSnap.id, ...data });
       }
     });
-
     const joinRequests = [];
 
     // Get join request for each board
@@ -272,11 +271,16 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
 export const acceptJoin = (joinRequest) => async dispatch => {
   try {
     const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
+    // users board!
 
     // Add user to team_members
     const boardRef = doc(boardsCollection, boardId);
     await updateDoc(boardRef, {
-      team_members: arrayUnion(`/users/${userId}`)
+      team_members: arrayUnion(userId)
+    });
+    const userRef = doc(usersCollection, userId);
+    await updateDoc(userRef, {
+      boards: arrayUnion(doc(boardsCollection, boardId))
     });
 
     // Update join request status
@@ -344,7 +348,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
             id: boardId,
             name: boardData.name,
             background_color: boardData.background_color,
-            team_members: boardData.team_members.map((ref) => ref.id),
+            team_members: boardData.team_members,
             owner_id:
               boardData.owner_id &&
               typeof boardData.owner_id === 'object' &&

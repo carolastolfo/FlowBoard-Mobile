@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import React, { useState, useEffect, useRef } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, Alert } from 'react-native';
 import { searchBoard, setBoards, joinBoard } from '../redux/actions'
 
 
@@ -48,18 +48,17 @@ const BoardsScreen = ({ navigation }) => {
 
     const handleJoinBoard = async (boardId) => {
         console.log("Joining board:", boardId);
-        dispatch(joinBoard(boardId, currentUserId));
+      
         const success = await dispatch(joinBoard(boardId, currentUserId));
 
         if (!success) {
-            alert("You already requested to join this board.");
+            Alert.alert("", "You already requested to join this board.");
         } else {
-            alert("Request sent successfully. Please wait for the owner's approval.");
+            Alert.alert("", "Request sent successfully. Please wait for the owner's approval.");
         }
     };
 
     const renderBoardItem = ({ item }) => (
-
         <TouchableOpacity
             style={[styles.boardCard, { backgroundColor: item.background_color }]}
             onPress={() => handleRedirect(item.id)}
