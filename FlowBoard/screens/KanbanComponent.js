@@ -8,16 +8,17 @@ import globalStyles from '../shared/globalStyles';
 
 const Tab = createBottomTabNavigator()
 
-const KanbanComponent = ({route}) => {
-  console.log("kanbabnnnsdlfjjsdlfjsdlkf",route)
+const KanbanComponent = ({ route }) => {
+
+  const { boardId } = route.params;
 
   const tabOptions = ({ route }) => (
     {
       tabBarActiveTintColor: '#6D72C3',
       tabBarInactiveTintColor: 'gray',
-      tabBarStyle: [{ display: 'flex' }],
       tabBarStyle: [
         {
+          display: 'flex',
           position: 'absolute',
           bottom: -10,
           height: 60,
@@ -51,9 +52,21 @@ const KanbanComponent = ({route}) => {
     <SafeAreaProvider>
       <SafeAreaView style={globalStyles.safeArea}>
         <Tab.Navigator screenOptions={tabOptions}>
-          <Tab.Screen component={TodoScreen} name='To-Do' />
-          <Tab.Screen component={DoingScreen} name='Doing' />
-          <Tab.Screen component={DoneScreen} name='Done' />
+          <Tab.Screen
+            component={TodoScreen}
+            name='To-Do'
+            initialParams={{ boardId }}
+          />
+          <Tab.Screen
+            component={DoingScreen}
+            name='Doing'
+            initialParams={{ boardId }}
+          />
+          <Tab.Screen
+            component={DoneScreen}
+            name='Done'
+            initialParams={{ boardId }}
+          />
         </Tab.Navigator>
       </SafeAreaView>
     </SafeAreaProvider>

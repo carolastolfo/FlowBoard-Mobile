@@ -8,9 +8,12 @@ import { handleAddTask } from '../utils/addTask';
 import { handleDelete } from '../utils/deleteTask';
 import EditTaskModal from '../utils/EditTaskModal';
 import DueDate from '../utils/DueDate';
+import Tag from '../utils/Tag';
 
+const DoneScreen = ({ navigation, route }) => {
 
-const DoneScreen = ({ navigation }) => {
+  const { boardId } = route.params;
+
   const dispatch = useDispatch();
   const [newTask, setNewTask] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -19,6 +22,7 @@ const DoneScreen = ({ navigation }) => {
 
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isDueDateModalOpen, setIsDueDateModalOpen] = useState(false);
+  const [isTagOpen, setIsTagOpen] = useState(false);
 
   const openEditTaskModal = () => setIsEditTaskModalOpen(true);
   const closeEditTaskModal = () => setIsEditTaskModalOpen(false);
@@ -26,15 +30,27 @@ const DoneScreen = ({ navigation }) => {
   const openDueDateModal = () => setIsDueDateModalOpen(true);
   const closeDueDateModal = () => setIsDueDateModalOpen(false);
 
+  const openTagModal = () => setIsTagOpen(true);
+  const closeTagModal = () => setIsTagOpen(false);
+
+  const tagColors = ["#EB1660", "#4F9D69", "#E28413"];
+
   useEffect(() => {
     const taskListener = dispatch(fetchTasks())
 
     return () => taskListener
   }, [dispatch]);
 
-  // const taskList = useSelector((state) => state.kanbantasks.listOfTasks);
+  // const taskList = useSelector((state) =>
+  //   state.kanbantasks.listOfTasks ? state.kanbantasks.listOfTasks.filter(task => task.status === 'to-do') : []
+  // );
+
   const taskList = useSelector((state) =>
-    state.kanbantasks.listOfTasks.filter(task => task.status === 'done')
+    state.kanbantasks.listOfTasks
+      ? state.kanbantasks.listOfTasks.filter(
+        task => task.boardId === boardId && task.status === currentScreen.toLowerCase()
+      )
+      : []
   );
 
   const handleStatusChange = () => {
@@ -56,7 +72,7 @@ const DoneScreen = ({ navigation }) => {
 
         <TouchableOpacity style={globalStyles.addButton} onPress={() => {
           if (newTask.trim()) {
-            handleAddTask(dispatch, newTask, currentScreen.toLowerCase());
+            handleAddTask(dispatch, newTask, boardId, currentScreen.toLowerCase());
             setNewTask("");
           }
         }}
@@ -83,7 +99,26 @@ const DoneScreen = ({ navigation }) => {
                     <Icon name="bars" color="gray" size={25} />
                   </TouchableOpacity>
 
-                  <Text style={globalStyles.taskText}>{item.name}</Text>
+                  <View style={{ gap: 10 }}>
+                    <Text style={globalStyles.taskText}>{item.name}</Text>
+
+                    {item.tag && item.tag.length > 0 && (
+                      <View style={globalStyles.tagContainer}>
+                        {item.tag.map((tag, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                              console.log('Deleting tag:', tag, 'for taskId:', item.id);
+                              handleDeleteTag(dispatch, item.id, tag);
+                            }}
+                            style={[{ backgroundColor: tagColors[index % tagColors.length] }, globalStyles.tagStyle]}
+                          >
+                            <Text style={globalStyles.tagText}>{tag}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
+                  </View>
                 </View>
               )}
               showsVerticalScrollIndicator={false}
@@ -182,11 +217,27 @@ const DoneScreen = ({ navigation }) => {
                 style={globalStyles.buttonContainer}
               >
                 <View style={globalStyles.contentContainer}>
-                  <Icon name='minus-circle' color='white' size={25} />
+                  <Icon name='calendar-check-o' color='white' size={25} />
                   <Text style={globalStyles.textContent}>Due Date</Text>
                 </View>
               </TouchableOpacity>
             </View>
+
+            <View style={globalStyles.itemContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(!showModal)
+                  openTagModal();
+                }}
+                style={globalStyles.buttonContainer}
+              >
+                <View style={globalStyles.contentContainer}>
+                  <Icon name='gg-circle' color='white' size={25} />
+                  <Text style={globalStyles.textContent}>Tag</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
 
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
@@ -216,6 +267,13 @@ const DoneScreen = ({ navigation }) => {
         isOpen={isDueDateModalOpen}
         closeModal={closeDueDateModal}
         // task={taskList.find((task) => task.id === selectedTaskId)}
+        task={taskList.find(task => task.id === selectedTaskId)}
+        taskId={selectedTaskId}
+      />
+
+      <Tag
+        isOpen={isTagOpen}
+        closeModal={closeTagModal}
         task={taskList.find(task => task.id === selectedTaskId)}
         taskId={selectedTaskId}
       />

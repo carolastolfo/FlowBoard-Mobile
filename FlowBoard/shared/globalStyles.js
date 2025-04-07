@@ -133,6 +133,24 @@ const globalStyles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
     fontSize: 16,
+  },
+  tagContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 5,
+  },
+  tagText: {
+    // backgroundColor: '#C7EF00',
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  tagStyle: {
+    marginRight: 6,
+    marginBottom: 6,
+    padding: 5,
+    paddingRight: 10,
+    paddingLeft: 10,
+    borderRadius: 20,
   }
 });
 
