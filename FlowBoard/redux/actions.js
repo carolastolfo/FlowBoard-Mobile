@@ -188,7 +188,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     const newBoard = {
       name: boardData.name,
       background_color: boardData.background_color,
-      team_members: userId,
+      team_members: [userId],
       owner_id: userId,
     };
     const newBoardRef = await addDoc(boardsCollection, newBoard);
@@ -208,7 +208,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
         id: newBoardRef.id,
         name: boardData.name,
         background_color: boardData.background_color,
-        team_members: userId,
+        team_members: [userId],
         owner_id: userId,
       },
     });
