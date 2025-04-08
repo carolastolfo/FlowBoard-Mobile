@@ -112,7 +112,7 @@ const BoardsScreen = ({ navigation }) => {
               handleDeleteBoard(item.id);
             }}
           >
-            <AntDesign name="close" size={18} color="#fff" />
+            <AntDesign name="close" size={18} color="black" />
           </TouchableOpacity>
         )}
       </View>
@@ -291,7 +291,9 @@ const styles = StyleSheet.create({
   },
 
   deleteButton: {
-    padding: 5,
+    padding: 3,
+    marginBottom: 8,
+
   },
 });
 
