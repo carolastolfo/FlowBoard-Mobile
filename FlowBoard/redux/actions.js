@@ -9,6 +9,7 @@ import {
   REGISTER_FAILURE,
   REGISTER_SUCCESS,
   CREATE_BOARD,
+  DELETE_BOARD,
   SEARCH_BOARD,
   SET_BOARDS,
   FETCH_TASKS,
@@ -216,6 +217,38 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     console.error("Error creating board or linking to user:", error);
   }
 }
+
+// delete board
+export const deleteBoard = (boardId, userId) => async (dispatch) => {
+  try {
+    // get the board reference
+    const boardDocRef = doc(boardsCollection, boardId);
+    
+    // get the user doc reference
+    const userDocRef = doc(usersCollection, userId);
+    
+    // remove the board from Firestore
+    await deleteDoc(boardDocRef);
+    
+    // remove the board reference from the user's boards array
+    await updateDoc(userDocRef, {
+      boards: arrayRemove(boardDocRef)
+    });
+    
+    console.log("Board deleted successfully!");
+    
+    // dispatch the action to update the Redux store
+    dispatch({
+      type: DELETE_BOARD,
+      payload: boardId
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting board:", error);
+    return { success: false, error: error.message };
+  }
+};
 
 //  Join requests list
 export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
