@@ -232,7 +232,7 @@ export const deleteBoard = (boardId, userId) => async (dispatch) => {
 
     // remove the board reference from the user's boards array
     await updateDoc(userDocRef, {
-      boards: arrayRemoBve(boardDocRef)
+      boards: arrayRemove(boardDocRef)
     });
 
     console.log("Board deleted successfully!");
