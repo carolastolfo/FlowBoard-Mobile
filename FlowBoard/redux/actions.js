@@ -9,6 +9,7 @@ import {
   REGISTER_FAILURE,
   REGISTER_SUCCESS,
   CREATE_BOARD,
+  DELETE_BOARD,
   SEARCH_BOARD,
   SET_BOARDS,
   FETCH_TASKS,
@@ -189,7 +190,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     const newBoard = {
       name: boardData.name,
       background_color: boardData.background_color,
-      team_members: userId,
+      team_members: [userId],
       owner_id: userId,
     };
     const newBoardRef = await addDoc(boardsCollection, newBoard);
@@ -209,7 +210,7 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
         id: newBoardRef.id,
         name: boardData.name,
         background_color: boardData.background_color,
-        team_members: userId,
+        team_members: [userId],
         owner_id: userId,
       },
     });
@@ -217,6 +218,38 @@ export const createBoard = (userId, boardData) => async (dispatch) => {
     console.error("Error creating board or linking to user:", error);
   }
 }
+
+// delete board
+export const deleteBoard = (boardId, userId) => async (dispatch) => {
+  try {
+    // get the board reference
+    const boardDocRef = doc(boardsCollection, boardId);
+
+    // get the user doc reference
+    const userDocRef = doc(usersCollection, userId);
+
+    // remove the board from Firestore
+    await deleteDoc(boardDocRef);
+
+    // remove the board reference from the user's boards array
+    await updateDoc(userDocRef, {
+      boards: arrayRemove(boardDocRef)
+    });
+
+    console.log("Board deleted successfully!");
+
+    // dispatch the action to update the Redux store
+    dispatch({
+      type: DELETE_BOARD,
+      payload: boardId
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting board:", error);
+    return { success: false, error: error.message };
+  }
+};
 
 //  Join requests list
 export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
@@ -227,11 +260,10 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
     // Get boards that current user is an owner
     boardsSnapshot.forEach(docSnap => {
       const data = docSnap.data();
-      if (data.owner_id.id === currentUserId) {
+      if (data.owner_id === currentUserId) {
         ownedBoards.push({ id: docSnap.id, ...data });
       }
     });
-
     const joinRequests = [];
 
     // Get join request for each board
@@ -273,11 +305,16 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
 export const acceptJoin = (joinRequest) => async dispatch => {
   try {
     const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
+    // users board!
 
     // Add user to team_members
     const boardRef = doc(boardsCollection, boardId);
     await updateDoc(boardRef, {
-      team_members: arrayUnion(`/users/${userId}`)
+      team_members: arrayUnion(userId)
+    });
+    const userRef = doc(usersCollection, userId);
+    await updateDoc(userRef, {
+      boards: arrayUnion(doc(boardsCollection, boardId))
     });
 
     // Update join request status
@@ -310,31 +347,42 @@ export const rejectJoin = (joinRequestId) => async dispatch => {
 
 //Boards list
 const boardListeners = {};
-const boardsMap = {};
 export const setBoards = (currentUserId) => async (dispatch) => {
   try {
-    // Fetch user document
+    const boardsMap = {};
+    // Clear old listeners
+    Object.values(boardListeners).forEach((unsub) => unsub());
+    Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
+    Object.keys(boardsMap).forEach((id) => delete boardsMap[id]);
+
     const userDocRef = doc(usersCollection, currentUserId);
     const userSnapshot = await getDoc(userDocRef);
-
-    // Ensure user data exists
     const userData = userSnapshot.exists() ? userSnapshot.data() : null;
-    if (!userData || !Array.isArray(userData.boards)) {
+
+    if (!userData || !Array.isArray(userData.boards) || userData.boards.length === 0) {
       dispatch({ type: SET_BOARDS, payload: { boards: [] } });
       return;
     }
 
-    // Extract string IDs from DocumentReferences
-    const boardIds = userData.boards.map((boardRef) => boardRef.id);
+    const boardIds = userData.boards.map((ref) => ref.id);
 
-    const unsubscribers = []; // store unsubscribe functions
+    // Firebase allows max 10 items in in clause
+    const boardChunks = [];
+    for (let i = 0; i < boardIds.length; i += 10) {
+      boardChunks.push(boardIds.slice(i, i + 10));
+    }
 
-    boardIds.forEach((boardId) => {
-      const boardRef = doc(boardsCollection, boardId);
+    const unsubscribers = [];
 
-      // Avoid duplicate listeners
-      if (boardListeners[boardId]) return;
+    boardChunks.forEach((chunk) => {
+      const q = query(boardsCollection, where("__name__", "in", chunk));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        // Clear existing boards in this batch
+        Object.keys(boardsMap).forEach((id) => {
+          if (chunk.includes(id)) delete boardsMap[id];
+        });
 
+<<<<<<< HEAD
       // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
       const unsubscribe = onSnapshot(boardRef, (snap) => {
         if (!snap.exists()) return;
@@ -364,6 +412,32 @@ export const setBoards = (currentUserId) => async (dispatch) => {
     });
 
     // Return a cleanup function to stop listening
+=======
+        snapshot.forEach((docSnap) => {
+          const boardData = docSnap.data();
+          boardsMap[docSnap.id] = {
+            id: docSnap.id,
+            name: boardData.name,
+            background_color: boardData.background_color,
+            team_members: boardData.team_members,
+            owner_id:
+              boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
+                ? boardData.owner_id.id
+                : boardData.owner_id || null,
+          };
+        });
+
+        dispatch({
+          type: SET_BOARDS,
+          payload: { boards: Object.values(boardsMap) },
+        });
+      });
+
+
+      unsubscribers.push(unsubscribe);
+    });
+
+>>>>>>> origin/main
     return () => {
       unsubscribers.forEach((unsub) => unsub());
       Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
