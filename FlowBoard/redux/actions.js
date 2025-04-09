@@ -382,37 +382,6 @@ export const setBoards = (currentUserId) => async (dispatch) => {
           if (chunk.includes(id)) delete boardsMap[id];
         });
 
-<<<<<<< HEAD
-      // Collect a stop function the Firestore gives us / onSnapshot returns a function that can stop listening
-      const unsubscribe = onSnapshot(boardRef, (snap) => {
-        if (!snap.exists()) return;
-
-        const boardData = snap.data();
-        boardsMap[boardId] = {
-          id: boardId,
-          name: boardData.name,
-          background_color: boardData.background_color,
-          team_members: boardData.team_members.map((ref) => ref.id),
-          owner_id:
-            boardData.owner_id &&
-              typeof boardData.owner_id === 'object' &&
-              boardData.owner_id.id
-              ? boardData.owner_id.id
-              : boardData.owner_id || null,
-        };
-
-        dispatch({
-          type: SET_BOARDS,
-          payload: { boards: Object.values(boardsMap) }
-        });
-      });
-
-      boardListeners[boardId] = unsubscribe;
-      unsubscribers.push(unsubscribe);
-    });
-
-    // Return a cleanup function to stop listening
-=======
         snapshot.forEach((docSnap) => {
           const boardData = docSnap.data();
           boardsMap[docSnap.id] = {
@@ -437,7 +406,6 @@ export const setBoards = (currentUserId) => async (dispatch) => {
       unsubscribers.push(unsubscribe);
     });
 
->>>>>>> origin/main
     return () => {
       unsubscribers.forEach((unsub) => unsub());
       Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
