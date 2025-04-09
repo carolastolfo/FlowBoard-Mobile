@@ -6,10 +6,11 @@ import globalStyles from '../shared/globalStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { handleAddTask } from '../utils/addTask';
 import { handleDelete } from '../utils/deleteTask';
-import { handleDeleteTag } from '../utils/deleteTag';
+import UpdateTaskStatus from '../utils/UpdateTaskStatus';
 import EditTaskModal from '../utils/EditTaskModal';
 import DueDate from '../utils/DueDate';
 import Tag from '../utils/Tag';
+import { handleDeleteTag } from '../utils/deleteTag';
 
 const TodoScreen = ({ navigation, route }) => {
 
@@ -24,6 +25,7 @@ const TodoScreen = ({ navigation, route }) => {
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [isDueDateModalOpen, setIsDueDateModalOpen] = useState(false);
   const [isTagOpen, setIsTagOpen] = useState(false);
+  const [isMoveOpen, setIsMoveOpen] = useState(false);
 
   const openEditTaskModal = () => setIsEditTaskModalOpen(true);
   const closeEditTaskModal = () => setIsEditTaskModalOpen(false);
@@ -33,6 +35,9 @@ const TodoScreen = ({ navigation, route }) => {
 
   const openTagModal = () => setIsTagOpen(true);
   const closeTagModal = () => setIsTagOpen(false);
+
+  const openMoveModal = () => setIsMoveOpen(true);
+  const closeMoveModal = () => setIsMoveOpen(false);
 
   const tagColors = ["#EB1660", "#4F9D69", "#E28413"];
 
@@ -111,7 +116,6 @@ const TodoScreen = ({ navigation, route }) => {
                           <TouchableOpacity
                             key={index}
                             onPress={() => {
-                              console.log('Deleting tag:', tag, 'for taskId:', item.id);
                               handleDeleteTag(dispatch, item.id, tag);
                             }}
                             style={[{ backgroundColor: tagColors[index % tagColors.length] }, globalStyles.tagStyle]}
@@ -121,6 +125,7 @@ const TodoScreen = ({ navigation, route }) => {
                         ))}
                       </View>
                     )}
+
                   </View>
                 </View>
               )}
@@ -134,7 +139,7 @@ const TodoScreen = ({ navigation, route }) => {
 
       <Modal visible={showModal} transparent={true} animationType='fade'>
         <View style={globalStyles.modalContainer}>
-          <View style={[globalStyles.modalView, { height: 400 }]}>
+          <View style={[globalStyles.modalView, { height: 450 }]}>
 
             <Text style={globalStyles.headerStyle}>Status: {currentScreen.toUpperCase()}</Text>
 
@@ -240,6 +245,22 @@ const TodoScreen = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
 
+
+            <View style={globalStyles.itemContainer}>
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(!showModal)
+                  openMoveModal();
+                }}
+                style={globalStyles.buttonContainer}
+              >
+                <View style={globalStyles.contentContainer}>
+                  <Icon name='arrow-circle-left' color='white' size={25} />
+                  <Text style={globalStyles.textContent}>Move task</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
             <View style={globalStyles.itemContainer}>
               <TouchableOpacity
                 onPress={() => {
@@ -275,6 +296,13 @@ const TodoScreen = ({ navigation, route }) => {
       <Tag
         isOpen={isTagOpen}
         closeModal={closeTagModal}
+        task={taskList.find(task => task.id === selectedTaskId)}
+        taskId={selectedTaskId}
+      />
+
+      <UpdateTaskStatus
+        isOpen={isMoveOpen}
+        closeModal={closeMoveModal}
         task={taskList.find(task => task.id === selectedTaskId)}
         taskId={selectedTaskId}
       />

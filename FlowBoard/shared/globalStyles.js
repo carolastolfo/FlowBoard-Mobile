@@ -5,6 +5,7 @@ const globalStyles = StyleSheet.create({
   /* Kanban Style */
   safeArea: {
     width: '100%',
+    backgroundColor: 'white',
     flex: 1,
   },
   container: {

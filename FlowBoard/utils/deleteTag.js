@@ -14,6 +14,7 @@ export const handleDeleteTag = (dispatch, taskId, tag) => {
       {
         text: "Delete",
         onPress: () => {
+          console.log("Calling deleteTag for task:", taskId, "and tag:", tag);
           dispatch(deleteTag({ taskId, tag }));
         },
         style: "destructive",

@@ -22,7 +22,7 @@ const BoardsScreen = ({ navigation }) => {
   const cleanupRef = useRef(null); // hold unsubscribe function
 
   console.log("\nCurrent boards in state: ", boards)
-  
+
   useEffect(() => {
     (async () => {
       cleanupRef.current = await dispatch(setBoards(currentUserId));
@@ -81,11 +81,11 @@ const BoardsScreen = ({ navigation }) => {
           style: "cancel"
         },
         {
-          text: "Delete", 
+          text: "Delete",
           style: "destructive",
           onPress: async () => {
             const result = await dispatch(deleteBoard(boardId, currentUserId));
-            
+
             if (result.success) {
               console.log("Board deleted successfully");
             } else {
@@ -245,6 +245,7 @@ const styles = StyleSheet.create({
   },
   boardsGrid: {
     flex: 1,
+    marginTop: -50
   },
   boardCard: {
     flex: 1,
