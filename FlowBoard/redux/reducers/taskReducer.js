@@ -22,15 +22,9 @@ export const taskReducer = (state = initialState, action) => {
     case EDIT_TASK: {
       return state
     }
-    case TOGGLE_COMPLETION_STATUS:
-      return {
-        ...state,
-        listOfTasks: state.listOfTasks.map((task) =>
-          task.id === action.payload.taskId
-            ? { ...task, completed: action.payload.updatedStatus === 'done', status: action.payload.updatedStatus }
-            : task
-        ),
-      };
+    case TOGGLE_COMPLETION_STATUS: {
+      return state
+    }
     case DELETE_TASK: {
       return state
     }

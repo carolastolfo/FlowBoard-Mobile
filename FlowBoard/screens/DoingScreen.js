@@ -141,7 +141,6 @@ const DoingScreen = ({ navigation, route }) => {
 
             <Text style={globalStyles.headerStyle}>Status: {currentScreen.toUpperCase()}</Text>
 
-
             <Text>
               Due Date: {taskList?.length > 0
                 ? taskList.find(task => task.id === selectedTaskId)?.dueDate || "No Due Date"

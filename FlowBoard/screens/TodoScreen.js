@@ -116,7 +116,6 @@ const TodoScreen = ({ navigation, route }) => {
                           <TouchableOpacity
                             key={index}
                             onPress={() => {
-                              console.log('Deleting tag:', tag, 'for taskId:', item.id);
                               handleDeleteTag(dispatch, item.id, tag);
                             }}
                             style={[{ backgroundColor: tagColors[index % tagColors.length] }, globalStyles.tagStyle]}
@@ -126,6 +125,7 @@ const TodoScreen = ({ navigation, route }) => {
                         ))}
                       </View>
                     )}
+
                   </View>
                 </View>
               )}

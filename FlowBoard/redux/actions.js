@@ -663,7 +663,8 @@ export const addTagToTask =
 
 // Delete Tag
 export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
-  console.log("Updated listOfTasks:", state.listOfTasks);
+
+  console.log("Deleting tag:", tag, "from taskId:", taskId);
 
   try {
     console.log(`Trying to delete tag for task ID : ${taskId} with tag: ${tag}`);

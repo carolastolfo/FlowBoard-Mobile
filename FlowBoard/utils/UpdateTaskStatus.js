@@ -17,25 +17,15 @@ const UpdateTaskStatus = ({ isOpen, closeModal, task, taskId }) => {
     { label: 'Done', value: 'done' }
   ];
 
-  // const handleMove = () => {
-  //   if (newStatus && taskId) {
-  //     dispatch(updateTaskStatus({ taskId, newStatus, updatedTask }));
-  //     closeModal();
-  //   } else {
-  //     console.error('Invalid status or taskId');
-  //   }
-  // };
-
   const handleMove = () => {
     if (newStatus && taskId) {
-      const updatedTask = { ...task, status: newStatus }; 
+      const updatedTask = { ...task, status: newStatus };
       dispatch(updateTaskStatus({ taskId, newStatus, updatedTask }));
       closeModal();
     } else {
       console.error('Invalid status or taskId');
     }
   };
-
 
   return (
     <Modal visible={isOpen} transparent={true} animationType='slide'>
