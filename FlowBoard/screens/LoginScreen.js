@@ -28,7 +28,7 @@ const LoginScreen = ({ navigation }) => {
       // Reset the navigation stack to Home to remove Login from history
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Boards' }],
+        routes: [{ name: "Boards" }],
       });
     }
   }, [currentUser, navigation]);
@@ -58,6 +58,8 @@ const LoginScreen = ({ navigation }) => {
       setIsLoading(false);
     }
   };
+
+  const navigateToRegister = () => navigation.navigate("Register")
 
   return (
     <SafeAreaView style={styles.container}>
@@ -105,11 +107,11 @@ const LoginScreen = ({ navigation }) => {
             )}
           </TouchableOpacity>
 
-          <View style={styles.noteContainer}>
-            <Text style={styles.noteText}>Demo credentials:</Text>
-            <Text style={styles.noteText}>
-              Email: test@test.com, Password: test123
-            </Text>
+          <View style={styles.registerContainer}>
+            <Text style={styles.registerText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={navigateToRegister}>
+              <Text style={styles.registerLink}>Register</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
@@ -120,11 +122,11 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#E5D4ED',
+    backgroundColor: "#E5D4ED",
   },
   contentContainer: {
     flex: 1,
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   logoContainer: {
     alignItems: "center",
@@ -152,16 +154,16 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    backgroundColor: '#E5D4ED',
+    backgroundColor: "#E5D4ED",
     paddingHorizontal: 15,
     paddingVertical: 12,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#6D72C3',
+    borderColor: "#6D72C3",
     fontSize: 16,
   },
   loginButton: {
-    backgroundColor: '#6D72C3',
+    backgroundColor: "#6D72C3",
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -173,14 +175,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
   },
-  noteContainer: {
+  registerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
     alignItems: "center",
     marginTop: 10,
   },
-  noteText: {
+  registerText: {
     color: "#666",
     fontSize: 14,
   },
+  registerLink: {
+      color: "#6D72C3",
+      fontSize: 14,
+      fontWeight: "600",
+    },
 });
 
 export default LoginScreen;
