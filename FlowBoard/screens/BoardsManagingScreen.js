@@ -4,9 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchJoinRequests, acceptJoin, rejectJoin } from '../redux/actions';
 
 const BoardsManagingScreen = () => {
-    const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
     const dispatch = useDispatch();
-
+    const currentUserId = useSelector(state => state.usersRoot.currentUser.id)
     const boards = useSelector(state => state.boardsRoot.boards);
     const joinRequests = useSelector(state => state.boardsRoot.joinRequests);
 

@@ -3,7 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import BoardsScreen from './BoardsScreen';
 import BoardsManagingScreen from './BoardsManagingScreen';
-// import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import globalStyles from '../shared/globalStyles';
 
