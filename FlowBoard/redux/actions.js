@@ -305,13 +305,13 @@ export const fetchJoinRequests = (currentUserId) => async (dispatch) => {
 export const acceptJoin = (joinRequest) => async dispatch => {
   try {
     const { boardId, userId, id: requestId } = joinRequest; // Destruct joinRequest
-    // users board!
 
     // Add user to team_members
     const boardRef = doc(boardsCollection, boardId);
     await updateDoc(boardRef, {
       team_members: arrayUnion(userId)
     });
+    // Add board to the requested user data
     const userRef = doc(usersCollection, userId);
     await updateDoc(userRef, {
       boards: arrayUnion(doc(boardsCollection, boardId))
@@ -346,15 +346,16 @@ export const rejectJoin = (joinRequestId) => async dispatch => {
 };
 
 //Boards list
-const boardListeners = {};
+const boardListeners = {}; // To track active Firestore snapshot listeners for boards
 export const setBoards = (currentUserId) => async (dispatch) => {
   try {
     const boardsMap = {};
     // Clear old listeners
-    Object.values(boardListeners).forEach((unsub) => unsub());
-    Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
-    Object.keys(boardsMap).forEach((id) => delete boardsMap[id]);
+    Object.values(boardListeners).forEach((unsub) => unsub()); // Unsubscribe all listeners
+    Object.keys(boardListeners).forEach((id) => delete boardListeners[id]); // Clear listener references
+    Object.keys(boardsMap).forEach((id) => delete boardsMap[id]); // Reset local board map
 
+    // Fetch user data
     const userDocRef = doc(usersCollection, currentUserId);
     const userSnapshot = await getDoc(userDocRef);
     const userData = userSnapshot.exists() ? userSnapshot.data() : null;
@@ -367,6 +368,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
     const boardIds = userData.boards.map((ref) => ref.id);
 
     // Firebase allows max 10 items in in clause
+    // If I take data per board, it renders board one my one
     const boardChunks = [];
     for (let i = 0; i < boardIds.length; i += 10) {
       boardChunks.push(boardIds.slice(i, i + 10));
@@ -374,6 +376,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
 
     const unsubscribers = [];
 
+    // Set up a listener for each chunk of boardIds
     boardChunks.forEach((chunk) => {
       const q = query(boardsCollection, where("__name__", "in", chunk));
       const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -382,6 +385,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
           if (chunk.includes(id)) delete boardsMap[id];
         });
 
+        // Add updated board data to the map
         snapshot.forEach((docSnap) => {
           const boardData = docSnap.data();
           boardsMap[docSnap.id] = {
@@ -389,7 +393,7 @@ export const setBoards = (currentUserId) => async (dispatch) => {
             name: boardData.name,
             background_color: boardData.background_color,
             team_members: boardData.team_members,
-            owner_id:
+            owner_id: // Some of user data is a ref others are string user id
               boardData.owner_id && typeof boardData.owner_id === "object" && boardData.owner_id.id
                 ? boardData.owner_id.id
                 : boardData.owner_id || null,
@@ -402,10 +406,11 @@ export const setBoards = (currentUserId) => async (dispatch) => {
         });
       });
 
-
+      // Store unsubscribe function for cleanup later
       unsubscribers.push(unsubscribe);
     });
 
+    // Return cleanup function to remove all listeners and clear maps
     return () => {
       unsubscribers.forEach((unsub) => unsub());
       Object.keys(boardListeners).forEach((id) => delete boardListeners[id]);
@@ -477,7 +482,7 @@ export const joinBoard = (boardId, userId) => async (dispatch) => {
       await addDoc(joinRequestsCollection, {
         boardId: boardId,
         userId: userId,
-        status: "pending", // Set status to "pending" / completed for accepted request
+        status: "pending", // Set status to "pending"
       });
 
       dispatch({
