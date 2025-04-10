@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 30,
     backgroundColor: "#E5D4ED",
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   header: {
     marginBottom: 20,
@@ -91,7 +92,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 20,
     borderRadius: 8,
-    justifyContent: "center",
+    width: '100%'
   },
   buttonText: {
     color: "white",
