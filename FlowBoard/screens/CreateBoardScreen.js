@@ -33,7 +33,7 @@ const CreateBoardScreen = ({ navigation }) => {
 
     setLoading(true);
 
-    dispatch(createBoard(currentUserId, { name: boardName, background_color: backgroundColor, team_members: teamMembers }))
+    dispatch(createBoard(currentUserId, { name: boardName, background_color: backgroundColor.toLowerCase(), team_members: teamMembers }))
       .then(() => {
         // redirect to board list screen after board creation
         navigation.navigate("Boards");

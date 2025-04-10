@@ -21,7 +21,6 @@ const BoardsScreen = ({ navigation }) => {
   const [boardName, setBoardName] = useState("");
   const cleanupRef = useRef(null); // hold unsubscribe function
 
-  console.log("\nCurrent boards in state: ", boards)
   
   useEffect(() => {
     (async () => {
