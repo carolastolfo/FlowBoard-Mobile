@@ -43,7 +43,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.subTitle}>Plan your day, prioritize tasks, and stay productive — all in one place.</Text>
           <Image
             source={require('../images/intro.gif')}
-            style={{ width: 400, height: 400, marginBottom: 20, justifyContent: 'center' }}
+            style={{ width: 400, height: 400, marginBottom: 20 }}
           />
           <TouchableOpacity
             onPress={() => navigation.navigate("Login")}
@@ -66,7 +66,7 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 30,
     backgroundColor: "#E5D4ED",
     justifyContent: 'center'
   },
@@ -88,10 +88,9 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#6D72C3",
-    padding: 10,
-    marginLeft: 10,
+    padding: 15,
     marginBottom: 20,
-    borderRadius: 4,
+    borderRadius: 8,
     justifyContent: "center",
   },
   buttonText: {

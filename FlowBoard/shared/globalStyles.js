@@ -86,7 +86,8 @@ const globalStyles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: { width: 5, height: 15 },
     shadowOpacity: 0.2,
-    shadowRadius: 10
+    shadowRadius: 10,
+    borderRadius: 10
   },
   headerStyle: {
     fontSize: 18,
@@ -100,6 +101,7 @@ const globalStyles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     backgroundColor: '#5C60A5',
+    borderRadius: 10
   },
   contentContainer: {
     flexDirection: "row",

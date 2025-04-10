@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { loginUser } from "../redux/actions"; 
+import { loginUser } from "../redux/actions";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -49,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
 
     setError("");
     setIsLoading(true);
-    
+
     try {
       // Dispatch login action for Redux
       dispatch(loginUser(email, password));
@@ -93,8 +93,8 @@ const LoginScreen = ({ navigation }) => {
             />
           </View>
 
-          <TouchableOpacity 
-            style={styles.loginButton} 
+          <TouchableOpacity
+            style={styles.loginButton}
             onPress={handleLogin}
             disabled={loading || isLoading}
           >
