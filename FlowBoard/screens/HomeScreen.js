@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View, StyleSheet, Image } from "react-native";
 import { useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../redux/actions";
@@ -20,7 +20,7 @@ const HomeScreen = ({ navigation }) => {
       headerRight: () =>
         currentUser ? (
           <TouchableOpacity onPress={handleLogout}>
-            <Text style={{ color: '#6D72C3', marginRight: 5  }}>Logout</Text>
+            <Text style={{ color: '#6D72C3', marginRight: 5 }}>Logout</Text>
           </TouchableOpacity>
         ) : null,
     });
@@ -39,6 +39,12 @@ const HomeScreen = ({ navigation }) => {
         </View>
       ) : (
         <View style={styles.container}>
+          <Text style={styles.title}>Stay on Track!</Text>
+          <Text style={styles.subTitle}>Plan your day, prioritize tasks, and stay productive — all in one place.</Text>
+          <Image
+            source={require('../images/intro.gif')}
+            style={{ width: 400, height: 400, marginBottom: 20 }}
+          />
           <TouchableOpacity
             onPress={() => navigation.navigate("Login")}
             style={styles.button}
@@ -60,28 +66,38 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 30,
     backgroundColor: "#E5D4ED",
+    justifyContent: 'center'
   },
   header: {
     marginBottom: 20,
   },
   title: {
     fontSize: 24,
+    color: "#6D72C3",
     fontWeight: "bold",
     marginBottom: 16,
+    textAlign: 'center'
+  },
+  subTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 20
   },
   button: {
     backgroundColor: "#6D72C3",
-    padding: 10,
-    marginLeft: 10,
+    padding: 15,
     marginBottom: 20,
-    borderRadius: 4,
+    borderRadius: 8,
     justifyContent: "center",
   },
   buttonText: {
     color: "white",
     fontSize: 14,
+    textAlign: 'center',
+    fontWeight: 'bold'
   },
 });
 

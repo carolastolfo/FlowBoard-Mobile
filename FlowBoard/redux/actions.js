@@ -20,6 +20,7 @@ import {
   UPDATE_TASK_DUE_DATE,
   ADD_TAG_TO_TASK,
   DELETE_TAG,
+  UPDATE_TASK_STATUS,
   JOIN_BOARD,
   ACCEPT_JOIN, REJECT_JOIN, FETCH_JOIN_REQUESTS
 } from "./actionTypes";
@@ -663,10 +664,7 @@ export const addTagToTask =
 // Delete Tag
 export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
 
-  // if (Array.isArray(tag)) {
-  //   tag = tag[0];
-  //   console.log("Using the first item from the array:", tag);
-  // }
+  console.log("Deleting tag:", tag, "from taskId:", taskId);
 
   try {
     console.log(`Trying to delete tag for task ID : ${taskId} with tag: ${tag}`);
@@ -690,5 +688,26 @@ export const deleteTag = ({ taskId, tag }) => async (dispatch) => {
   }
 };
 
+// Update task status
+export const updateTaskStatus = ({ taskId, newStatus, updatedTask }) => async (dispatch) => {
+
+  try {
+    console.log("Trying to update task status");
+
+    const docRef = doc(db, "kanbantasks", updatedTask.id);
+
+    await updateDoc(docRef, updatedTask);
+
+    console.log("Task successfully updated!");
+
+    dispatch({
+      type: UPDATE_TASK_STATUS,
+      payload: { taskId, newStatus, updatedTask }
+    });
+
+  } catch (error) {
+    console.error("Error updating task: ", error);
+  }
+};
 
 
