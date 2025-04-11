@@ -30,7 +30,7 @@ const RegisterScreen = ({ navigation }) => {
       // registration successful, navigate to Home and remove register from stack
       navigation.reset({
         index: 0,
-        routes: [{ name: 'Home' }],
+        routes: [{ name: 'Boards' }],
       });
     }
   }, [currentUser, navigation]);

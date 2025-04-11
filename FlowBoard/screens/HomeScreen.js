@@ -42,7 +42,7 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.title}>Stay on Track!</Text>
           <Text style={styles.subTitle}>Plan your day, prioritize tasks, and stay productive — all in one place.</Text>
           <Image
-            source={require('../images/intro.gif')}
+            source={require('../assets/intro.gif')}
             style={{ width: 400, height: 400, marginBottom: 20 }}
           />
           <TouchableOpacity

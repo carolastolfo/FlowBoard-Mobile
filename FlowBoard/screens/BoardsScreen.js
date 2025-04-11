@@ -47,10 +47,17 @@ const BoardsScreen = ({ navigation }) => {
     };
 
     // To redirect to board
-    const handleRedirect = (boardId) => {
+    const handleRedirect = (board) => {
         setTimeout(() => {
-            console.log("Navigating to board:", boardId);
-            navigation.navigate("KanbanBoard", { boardId });
+            console.log("Navigating to board:", board.id);
+            const isCurrentUserInTeam = board.team_members.find(
+                (member) => member === currentUserId
+            )
+            if (isCurrentUserInTeam) {
+                navigation.navigate("KanbanBoard", { boardId: board.id });
+            } else {
+                Alert.alert("", "You don't have permission to access this board");
+            }
         }, 500);
     };
 
@@ -99,7 +106,7 @@ const BoardsScreen = ({ navigation }) => {
     const renderBoardItem = ({ item }) => (
         <TouchableOpacity
             style={[styles.boardCard, { backgroundColor: item.background_color }]}
-            onPress={() => handleRedirect(item.id)}
+            onPress={() => handleRedirect(item)}
         >
             <View style={styles.titleContainer}>
                 <Text style={styles.boardTitle}>{item.name}</Text>
